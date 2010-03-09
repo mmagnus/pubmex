@@ -1,0 +1,73 @@
+pubmex.py
+===========================
+
+TABLE OF CONTENTS
+-----------------
+
+1) DESCRIPTION
+2) INSTALLATION
+3) DEPENDENCIES
+4) EXAMPLES
+5) BUGS
+6) COPYRIGHT AND LICENCE
+7) AUTHOR INFORMATION
+8) ACKNOWLEDGEMENTS
+
+
+1) DESCRIPTION
+--------------
+pubmex.py is a script to get a fancy paper title based on given DOI or PMID.
+Format of the title:
+	a first author(uppercase) . a last author(uppercase) - title("dotted") . PMID . year . journal . pdf
+Using xclip pubmex.py automatically copy the title to the clipboard. Just type Ctrl+V or paste it somewhere else.
+
+2) INSTALLATION
+--------------
+just run it :-)
+
+3) DEPENDENCIES
+--------------
+pubmex.py requiers:
+	- python 2.6 (http://www.python.org/)
+	- biopython (http://biopython.org/wiki/Main_Page)
+	- xclip (http://sourceforge.net/projects/xclip/)
+
+4) EXAMPLES
+--------------
+magnus@debian:~/workspace/pubmex$ python pubmex.py -d
+Usage: pubmex.py [options] id
+
+ examples: pubmex.py -d  17123955, pubmex.py -d 10.1038/embor.2008.212
+
+Options:
+  --version        show program's version number and exit
+  -h, --help       show this help message and exit
+  -p, --pubmed_id  pass PMID of the paper
+  -d, --doi        pass DOI of the paper
+
+magnus@debian:~/workspace/pubmex$ ./pubmex.py -d  17123955
+KIM_K.CARTHEW_RW-Conversion.of.pre-RISC.to.holo-RISC.by.Ago2.during.assembly.of.RNAi.complexes.17123955.2007.RNA.pdf
+
+magnus@debian:~/workspace/pubmex$ python pubmex.py -d 10.1038/embor.2008.212
+KELLEY_L.SCOTT_M-The.evolution.of.biology..A.shift.towards.the.engineering.of.prediction-generating.tools.and.away.from.traditional.research.practice.19008917.2008.EMBO.REP.pdf
+
+5) BUGS
+--------------
+pubmex.py might have still problem if it has to parse title of authors with characters like ółą and so on.
+
+6) COPYRIGHT AND LICENCE
+----------------------------
+pubmex.py is Copyright (C) 2010 Marcin Magnus.  All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as GLP
+
+7) AUTHOR INFORMATION
+
+Marcin Magnus, m.magnus@o2.pl
+
+8) ACKNOWLEDGEMENTS
+
+:-)
+
+

@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+#for windows
+
 """
 copyright 2010 Marcin Magnus
 

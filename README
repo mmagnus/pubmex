@@ -18,7 +18,7 @@ TABLE OF CONTENTS
 --------------
 pubmex.py is a script to get a fancy paper title based on given DOI or PMID.
 Format of the title:
-	a first author(uppercase) . a last author(uppercase) - title("dotted") . PMID . year . journal . pdf
+	a first author(uppercase) . a last author(uppercase) - title("dotted") . PMID . journal . year . pdf
 Using xclip pubmex.py automatically copy the title to the clipboard. Just type Ctrl+V or paste it somewhere else.
 
 2) INSTALLATION
@@ -37,7 +37,7 @@ pubmex.py requiers:
 magnus@debian:~/workspace/pubmex$ python pubmex.py -d
 Usage: pubmex.py [options] id
 
- examples: pubmex.py -d  17123955, pubmex.py -d 10.1038/embor.2008.212
+ examples: pubmex.py -p  17123955, pubmex.py -d 10.1038/embor.2008.212
 
 Options:
   --version        show program's version number and exit
@@ -45,11 +45,11 @@ Options:
   -p, --pubmed_id  pass PMID of the paper
   -d, --doi        pass DOI of the paper
 
-magnus@debian:~/workspace/pubmex$ ./pubmex.py -d  17123955
-KIM_K.CARTHEW_RW-Conversion.of.pre-RISC.to.holo-RISC.by.Ago2.during.assembly.of.RNAi.complexes.17123955.2007.RNA.pdf
+magnus@debian:~/workspace/pubmex$ python pubmex.py -p  17123955
+KIM_K.CARTHEW_RW-Conversion.of.pre-RISC.to.holo-RISC.by.Ago2.during.assembly.of.RNAi.complexes.17123955.RNA.2007.pdf
 
 magnus@debian:~/workspace/pubmex$ python pubmex.py -d 10.1038/embor.2008.212
-KELLEY_L.SCOTT_M-The.evolution.of.biology..A.shift.towards.the.engineering.of.prediction-generating.tools.and.away.from.traditional.research.practice.19008917.2008.EMBO.REP.pdf
+KELLEY_L.SCOTT_M-The.evolution.of.biology.A.shift.towards.the.engineering.of.prediction-generating.tools.and.away.from.traditional.research.practice.19008917.EMBO.REP.2008.pdf
 
 5) BUGS
 --------------

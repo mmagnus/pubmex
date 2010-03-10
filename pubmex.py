@@ -63,8 +63,8 @@ def get_title_via_pmid(pmid, verbose = 0):
 
     title_of_pub = dot(summary_dict['Title'].strip())
     
-    title = summary_dict['AuthorList'][0].strip() # authors
-    title += '.'+summary_dict['AuthorList'][-1].strip() # authors
+    title = summary_dict['AuthorList'][0].split(' ')[0].strip() # authors
+    title += '.'+summary_dict['AuthorList'][-1].split(' ')[0].strip() # authors
     title += '-'+title_of_pub
     title += '.'+pmid
     title += '.'+dot(summary_dict['Source']).upper()
@@ -136,6 +136,9 @@ examples: pubmex.py -p 17123955, pumex.py -d 10.1038/embor.2008.212
 if '__main__' == __name__:
     OPTIONS, ARGUMENTS = get_options()
     if OPTIONS.pubmed_id:
+        if ARGUMENTS[0] == 'demo':
+            ARGUMENTS[0] = '17123955'
+            print 'Demo PMID: ',ARGUMENTS[0]
         print get_title_via_pmid(ARGUMENTS[0])
     if OPTIONS.doi:
         print get_title_via_doi(ARGUMENTS[0])

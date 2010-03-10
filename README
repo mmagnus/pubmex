@@ -23,14 +23,29 @@ Using xclip pubmex.py automatically copy the title to the clipboard. Just type C
 
 2) INSTALLATION
 --------------
-just run it :-)
+
+2a) LINUX
+--------------
+
+unzip & run it :-)
+	- xclip (http://sourceforge.net/projects/xclip/)
+
+2b) WINDOWS
+--------------
+
+Install:
+	- http://www.python.org/ftp/python/2.6.4/python-2.6.4.msi
+	- http://biopython.org/DIST/biopython-1.53.win32-py2.6.exe
+
+
+
 
 3) DEPENDENCIES
 --------------
 pubmex.py requiers:
 	- python 2.6 (http://www.python.org/)
 	- biopython (http://biopython.org/wiki/Main_Page)
-	- xclip (http://sourceforge.net/projects/xclip/)
+
 
 4) EXAMPLES
 --------------

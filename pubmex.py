@@ -35,6 +35,8 @@ def clean_string(text):
     """
     execute operations to clean up a given string
     """
+    text = text.replace(')','.')
+    text = text.replace('(','.')
     text = text.replace('..','.') # Marcin..Magnus -> Marcin.Magnus # to do
     text = text.replace('-.','-') # Magnus-.student -> Magnus-student
     text = text.replace('.-','-')
@@ -48,6 +50,16 @@ def prepare_customed_title(text):
     text = text.replace(',',' ')
     text = re.sub('\s+','.',text)
     return text 
+
+def is_it_pmid(id):
+    """
+    id - it might be doi or pmid
+    """
+    if re.search('^\d+$',id):#17123955
+        return True 
+    else:
+        return False
+    
 
 def get_title_via_pmid(pmid, reference, customed_title, verbose = 0):
     """

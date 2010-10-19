@@ -18,7 +18,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 DEP:
- - pdftotext http://en.wikipedia.org/wiki/Pdftotext
+ - pdftotexthttp://en.wikipedia.org/wiki/Pdftotext
  - xclip http://sourceforge.net/projects/xclip/
 """
 
@@ -134,7 +134,6 @@ def text2clip(title, verbose = 0):
     cmd = "echo '"+title.strip() + "'| xclip -selection clipboard"
     if verbose:
         print cmd
-    print
     print 'The filename went to your clipboard :-) (hopefully)'
     os.system(cmd)
 
@@ -218,7 +217,7 @@ def get_options(verbose=False):
     """
     usage = "%prog [options] id"
     description = """
-examples: pubmex.py -p 17123955, pumex.py -d 10.1038/embor.2008.212
+examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -a file.pdf -r
 """
     version = VERSION
 

@@ -30,20 +30,20 @@ Using xclip pubmex.py automatically copy the title to the clipboard. Just type C
 unzip & run it :-)
 	- xclip (http://sourceforge.net/projects/xclip/)
 
-2b) WINDOWS
+2b) WINDOWS (NOT TESTED!!!)
 --------------
 
 Install:
-	- http://www.python.org/ftp/python/2.6.4/python-2.6.4.msi
-	- http://biopython.org/DIST/biopython-1.53.win32-py2.6.exe
-
+	- Python http://www.python.org/ftp/python/2.6.4/python-2.6.4.msi
+	- Biopython http://biopython.org/DIST/biopython-1.53.win32-py2.6.exe
+	- GTK+ http://sourceforge.net/projects/gtk-win/ direct link http://downloads.sourceforge.net/project/gtk-win/GTK%2B%20Runtime%20Environment/GTK%2B%202.16/gtk2-runtime-2.16.6-2010-02-24-ash.exe?use_mirror=garr
+	- pyGTK http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.16/pygtk-2.16.0+glade.win32-py2.6.exe
 
 3) DEPENDENCIES
 --------------
 pubmex.py requiers:
 	- python 2.6 (http://www.python.org/)
 	- biopython (http://biopython.org/wiki/Main_Page)
-
 
 4) EXAMPLES
 --------------
@@ -64,20 +64,46 @@ Options:
   -r, --reference       reference format
 
 
-magnus@debian:~/workspace/pubmex$ python pubmex.py -p 17123955
-Kim.Carthew-Conversion.of.pre-RISC.to.holo-RISC.by.Ago2.during.assembly.of.RNAi.complexes.-17123955.RNA.2007.pdf
+magnus@maximus:~/django/pubmexproject/pubmexapp/libs/pubmex$ python pubmex.py -p 20533529 
+###
+Kosinski.Plotz-Identification.of.Lynch.syndrome.mutations.in.the.MLH1-PMS2.interface.that.disturb.dimerization.and.mismatch.repair-20533529.HUM.MUTAT.2010.pdf
+###
 
-magnus@debian:~/workspace/pubmex$ python pubmex.py -p 17123955 -r
-Kim K, Lee YS, Carthew RW Conversion of pre-RISC to holo-RISC by Ago2 during assembly of RNAi complexes. RNA 2007 Jan;13(1):22-9
+The filename went to your clipboard :-) (hopefully)
+---- 
+# define your own keywords
+magnus@maximus:~/django/pubmexproject/pubmexapp/libs/pubmex$ python pubmex.py -p 20533529 -k 'MLH1,PMS2'
+Kosinski.Plotz-MLH1.PMS2-20533529.HUM.MUTAT.2010.pdf
+----
 
-magnus@debian:~/workspace/pubmex$ python pubmex.py -p 17123955 -t titile.i.want.to.give
-Kim.Carthew-titile.i.want.to.give-17123955.RNA.2007.pdf
-
-magnus@debian:~/workspace/pubmex$ python pubmex.py -p 17123955 -t 'my own title'
-Kim.Carthew-my.own.title-17123955.RNA.2007.pdf
-
-magnus@debian:~/workspace/pubmex$ python pubmex.py -d 10.1038/embor.2008.212
+magnus@maximus:~/django/pubmexproject/pubmexapp/libs/pubmex$ python pubmex.py -p 10.1038/embor.2008.212
 Kelley.Scott-The.evolution.of.biology.A.shift.towards.the.engineering.of.prediction-generating.tools.and.away.from.traditional.research.practice-19008917.EMBO.REP.2008.pdf
+----
+
+magnus@maximus:~/django/pubmexproject/pubmexapp/libs/pubmex$ python pubmex.py -a demo/demo01.pdf 
+###
+DOI: 10.1038/nature07600
+FILENAME: demo/demo01.pdf
+###
+demo/demo01.pdf -*NOT*-> demo/Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
+Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
+###
+
+---- 
+## add -r to DO rename files
+
+magnus@maximus:~/django/pubmexproject/pubmexapp/libs/pubmex$ python pubmex.py -a demo/demo01.pdf -r
+###
+DOI: 10.1038/nature07600
+FILENAME: demo/demo01.pdf
+###
+demo/demo01.pdf -*DO*-> demo/Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
+Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
+###
+
+The filename went to your clipboard :-) (hopefully)
+
+
 
 5) BUGS
 --------------
@@ -92,7 +118,7 @@ under the same terms as GLP
 
 7) AUTHOR INFORMATION
 
-Marcin Magnus, m.magnus@o2.pl
+Marcin Magnus, magnus@genesilico.pl
 
 8) ACKNOWLEDGEMENTS
 

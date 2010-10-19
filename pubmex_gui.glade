@@ -16,7 +16,7 @@
             <property name="visible">True</property>
             <child>
               <widget class="GtkButton" id="get_button">
-                <property name="label" translatable="yes">Go!</property>
+                <property name="label" translatable="yes">Go</property>
                 <property name="width_request">50</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -32,7 +32,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">&#x25CF;</property>
-                <property name="text" translatable="yes">12</property>
               </widget>
               <packing>
                 <property name="position">1</property>
@@ -65,16 +64,6 @@
               </widget>
               <packing>
                 <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkButton" id="button1">
-                <property name="label" translatable="yes">button</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-              </widget>
-              <packing>
-                <property name="position">2</property>
               </packing>
             </child>
           </widget>

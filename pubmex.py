@@ -16,6 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+DEP:
+ - pdftotext http://en.wikipedia.org/wiki/Pdftotext
+ - xclip http://sourceforge.net/projects/xclip/
 """
 
 from Bio import Entrez#biopython
@@ -23,9 +27,13 @@ import sys
 import optparse
 import os
 import re
+import tempfile
+import subprocess
+import shutil
 
 VERSION = '0.02'
 MAIL='your_mail@gmail.com'
+DEBUG = False
 
 def dot(text):
     """ change ' '(space) into . ,e.g. Marcin Magnus -> Marcin.Magnus"""
@@ -36,10 +44,16 @@ def clean_string(text):
     execute operations to clean up a given string
     """
     text = text.replace(')','.')
+    text = text.replace('[','.')
+    text = text.replace(']','.')
+    text = text.replace(':.','.')# for windows, there can not be :
     text = text.replace('(','.')
-    text = text.replace('..','.') # Marcin..Magnus -> Marcin.Magnus # to do
     text = text.replace('-.','-') # Magnus-.student -> Magnus-student
     text = text.replace('.-','-')
+    text = text.replace(',.','.')
+    text = text.replace('/','.')
+    text = text.replace('\'','')
+    text = text.replace('..','.') # Marcin..Magnus -> Marcin.Magnus # to do
     return text
 
 def prepare_customed_title(text):
@@ -80,7 +94,10 @@ def get_title_via_pmid(pmid, reference, customed_title, verbose = 0):
     need xclip - http://sourceforge.net/projects/xclip/
     """
     result = Entrez.esummary(db = "pubmed", id = pmid, email = MAIL)
-    summary_dict = Entrez.read(result)[0]    
+    try:
+        summary_dict = Entrez.read(result)[0]    
+    except RuntimeError: #### there is NO pmd like this
+        return False
 
     if verbose:
         print summary_dict
@@ -110,12 +127,65 @@ def get_title_via_pmid(pmid, reference, customed_title, verbose = 0):
             + summary_dict['Source'].strip() +" "\
             + summary_dict['SO']
 
-    cmd = "echo '"+title + "' | xclip -selection clipboard"
-    if verbose:
-        print cmd
-    os.system(cmd)
 
     return title
+
+def text2clip(title, verbose = 0):
+    cmd = "echo '"+title.strip() + "'| xclip -selection clipboard"
+    if verbose:
+        print cmd
+    print
+    print 'The filename went to your clipboard :-) (hopefully)'
+    os.system(cmd)
+
+def doi2pmid(doi):
+    """
+    Get a DOI based on a give DOI
+    """
+    result = Entrez.esearch(db = "pubmed", term = doi, email = MAIL) ## *need to be improved*
+    out = Entrez.read(result)
+    idlist = out["IdList"]
+    try:
+        return idlist[0] ### it's PMID
+    except IndexError:
+        return False
+
+def get_title_auto_from_pdf(filename, reference, customed_title, verbose = 0):
+    doi = get_doi_from_pdf(filename)
+    if doi:
+        return get_title_via_doi(doi, reference, customed_title, verbose = 0)
+    else:
+        print 'DOI has *not* been found automatically!'
+
+def get_doi_from_pdf(filename, verbose = 1):
+    f = tempfile.NamedTemporaryFile()
+    #print f.name
+    ## degum
+    if not DEBUG:
+        txtfn = f.name
+    else:
+        txtfn = 'temp'
+        print 'DEBUG - temp generated'
+    f.close()
+    #args = ['pdftotext', filename, txtfn]#f.name]
+    args = ['pdftotext', filename, txtfn]
+    p = subprocess.call(args)
+    doi = False
+    if p == 0:# it means it's OK
+        txt = open(txtfn).read()
+        ###
+        rex = re.compile('doi:(?P<doi>.*\.\w+\.\w+)').search(txt)
+        rex2 = re.compile('DOI\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
+        rex3 = re.compile('DOI:\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
+        rex4 = re.compile('doi:(?P<doi>\d+.\d+/[\w/]+)').search(txt)
+        if rex: doi = rex.group('doi')
+        if rex2: doi = rex2.group('doi')
+        if rex3: doi = rex3.group('doi')
+        if rex4: doi = rex4.group('doi')
+        if verbose: print 'DOI:', doi
+        ###
+    return doi
+
 
 def get_title_via_doi(doi, reference, customed_title, verbose = 0):
     """
@@ -130,13 +200,17 @@ def get_title_via_doi(doi, reference, customed_title, verbose = 0):
     RETURN:
     - title(string)
     """
+    doi=doi.replace('DOI:','')
+    doi=doi.replace('doi:','')
     if verbose:
         print doi
 
-    result = Entrez.esearch(db = "pubmed", term = doi, email = MAIL) ## *need to be improved*
-    out = Entrez.read(result)
-    idlist = out["IdList"]
-    return get_title_via_pmid(idlist[0],reference, customed_title)
+    pmid = doi2pmid(doi)
+    if pmid:
+        return get_title_via_pmid(pmid,reference, customed_title)
+    else: ### return problem
+        return False
+        
 
 def get_options(verbose=False):
     """
@@ -152,36 +226,65 @@ examples: pubmex.py -p 17123955, pumex.py -d 10.1038/embor.2008.212
                               version = version,
                               usage = usage)
 
-    parser.add_option("--pubmed_id", "-p",
-                      help = "pass PMID of the paper")
+    parser.add_option("--PMID_or_DOI", "-p",
+                      help = "pass PMID/DOI of the paper")
 
-    parser.add_option("--customed_title", "-t", type="string", #dest='customed_title', 
-                      help = """pass your title for a pdf
-in a format 'RNA, structure' """ )
+    parser.add_option("--automatic", "-a",
+                      help = "try to get DOI automatically from a pdf")
 
-    parser.add_option("--doi", "-d",
-                      help = "pass DOI of the paper")
+    parser.add_option("--keywords", "-k", type="string", #dest='customed_title', 
+                      help = """pass your keywords which makes a filename in a format 'RNA, structure' """ )
 
-    parser.add_option("--reference", "-r", action="store_true",
-                      help = "reference format", default=False)
+    #parser.add_option("--reference", "-r", action="store_true",
+    #                  help = "reference format", default=False)
+    
+    parser.add_option("--rename", "-r", action="store_true",
+                      help = "rename files (only in a automatic mode)", default=False)
+
+
     if verbose:
         print parser.parse_args()#(<Values at 0xb7b4b4cc: {'pmid': '1212'}>, [])
 
     (options, arguments) = parser.parse_args()
 
-    if not options.pubmed_id and not options.doi:
+    if not options.PMID_or_DOI and not options.automatic:
         parser.print_help()
-        parser.error('You have to pass PMID or DOI')
+        parser.error('You have to pass PMID or DOI. You migth set -a (automatic)')
         sys.exit(1)
 
     return options, arguments
 
 if '__main__' == __name__:
     OPTIONS, ARGUMENTS = get_options()
-    if OPTIONS.pubmed_id:
-        #if ARGUMENTS[0] == 'demo':
-        #    ARGUMENTS[0] = '17123955'
-        #    print 'Demo PMID: ',ARGUMENTS[0]
-        print get_title_via_pmid(OPTIONS.pubmed_id, OPTIONS.reference, OPTIONS.customed_title)
-    if OPTIONS.doi:
-        print get_title_via_doi(OPTIONS.doi, OPTIONS.reference, OPTIONS.customed_title)
+    keywords = ''
+    title = ''
+    ###
+    print '###'
+    if OPTIONS.PMID_or_DOI:
+        if is_it_pmid(OPTIONS.PMID_or_DOI):
+            title = get_title_via_pmid(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)
+        else:
+
+            title = get_title_via_doi(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)# OPTIONS.reference, 
+    ###
+    if OPTIONS.automatic:
+        title = get_title_auto_from_pdf(OPTIONS.automatic, False, OPTIONS.keywords)
+        print 'FILENAME:', OPTIONS.automatic
+        basename =  os.path.basename(OPTIONS.automatic)
+        src = OPTIONS.automatic
+        dst = OPTIONS.automatic.replace(basename, title)
+        print '###'
+        if OPTIONS.rename:
+            print src,'-*DO*->', dst
+            shutil.move(src, dst)
+        else:
+            print src,'-*NOT*->', dst
+            pass
+    ###
+    if title is not False:
+        print title
+        print '###'
+        text2clip(title)
+    else:
+        print 'Problem! Check your PMID/DOI'
+        print '###'

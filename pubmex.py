@@ -34,6 +34,7 @@ import shutil
 VERSION = '0.02'
 MAIL='your_mail@gmail.com'
 DEBUG = False
+JDICT={'NUCLEIC.ACIDS.RES': 'NAR'}
 
 def dot(text):
     """ change ' '(space) into . ,e.g. Marcin Magnus -> Marcin.Magnus"""
@@ -53,6 +54,7 @@ def clean_string(text):
     text = text.replace(',.','.')
     text = text.replace('/','.')
     text = text.replace('\'','')
+    text = text.replace('--','-')
     text = text.replace('..','.') # Marcin..Magnus -> Marcin.Magnus # to do
     return text
 
@@ -122,6 +124,10 @@ def get_title_via_pmid(pmid, reference, customed_title, verbose = 0):
         title += '.pdf'
 
         title = clean_string(title)
+        ###
+        for k in JDICT.keys():
+            title = title.replace(k, JDICT[k])
+            
     else:##reference
         title = ", ".join(summary_dict['AuthorList']) + " " + summary_dict['Title'].strip() + " "\
             + summary_dict['Source'].strip() +" "\
@@ -134,7 +140,7 @@ def text2clip(title, verbose = 0):
     cmd = "echo '"+title.strip() + "'| xclip -selection clipboard"
     if verbose:
         print cmd
-    print 'The filename went to your clipboard :-) (hopefully)'
+    #print 'The filename went to your clipboard :-) (hopefully)'
     os.system(cmd)
 
 def doi2pmid(doi):
@@ -144,9 +150,10 @@ def doi2pmid(doi):
     result = Entrez.esearch(db = "pubmed", term = doi, email = MAIL) ## *need to be improved*
     out = Entrez.read(result)
     idlist = out["IdList"]
-    try:
-        return idlist[0] ### it's PMID
-    except IndexError:
+    if DEBUG: print 'IdList', idlist
+    if len(idlist) == 1:
+        return idlist[0] ## if IdList ['20959296', '20959295', '20959294', '20959293', '20959292', '20959291', '20959290', '20959289', '20959288', '20959287', '20952411', '20952410', '20952409', '20952408', '20952407', '20952406', '20952405', '20952404', '20952403', '20952402'] # problem !!!
+    else: 
         return False
 
 def get_title_auto_from_pdf(filename, reference, customed_title, verbose = 0):
@@ -155,6 +162,7 @@ def get_title_auto_from_pdf(filename, reference, customed_title, verbose = 0):
         return get_title_via_doi(doi, reference, customed_title, verbose = 0)
     else:
         print 'DOI has *not* been found automatically!'
+        return False
 
 def get_doi_from_pdf(filename, verbose = 1):
     f = tempfile.NamedTemporaryFile()
@@ -177,16 +185,19 @@ def get_doi_from_pdf(filename, verbose = 1):
         rex2 = re.compile('DOI\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
         rex3 = re.compile('DOI:\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
         rex4 = re.compile('doi:(?P<doi>\d+.\d+/[\w/]+)').search(txt)
+        rex5 = re.compile('DOI:\s+(?P<doi>.+)').search(txt)
         if rex: doi = rex.group('doi')
         if rex2: doi = rex2.group('doi')
         if rex3: doi = rex3.group('doi')
         if rex4: doi = rex4.group('doi')
+        if rex5: doi = rex5.group('doi')
         if verbose: print 'DOI:', doi
+
         ###
     return doi
 
 
-def get_title_via_doi(doi, reference, customed_title, verbose = 0):
+def get_title_via_doi(doi, reference, customed_title, verbose = 1):
     """
     GET:
     - doi, e.g.
@@ -201,10 +212,10 @@ def get_title_via_doi(doi, reference, customed_title, verbose = 0):
     """
     doi=doi.replace('DOI:','')
     doi=doi.replace('doi:','')
-    if verbose:
-        print doi
+    if DEBUG: print doi
 
     pmid = doi2pmid(doi)
+    if DEBUG: print 'PMID:', pmid
     if pmid:
         return get_title_via_pmid(pmid,reference, customed_title)
     else: ### return problem
@@ -217,7 +228,7 @@ def get_options(verbose=False):
     """
     usage = "%prog [options] id"
     description = """
-examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -a file.pdf -r
+examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -a -f file.pdf -r
 """
     version = VERSION
 
@@ -228,7 +239,10 @@ examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -
     parser.add_option("--PMID_or_DOI", "-p",
                       help = "pass PMID/DOI of the paper")
 
-    parser.add_option("--automatic", "-a",
+    parser.add_option("--filename", "-f",
+                      help = "filename of a pdf")
+
+    parser.add_option("--automatic", "-a", action="store_true",
                       help = "try to get DOI automatically from a pdf")
 
     parser.add_option("--keywords", "-k", type="string", #dest='customed_title', 
@@ -245,6 +259,7 @@ examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -
         print parser.parse_args()#(<Values at 0xb7b4b4cc: {'pmid': '1212'}>, [])
 
     (options, arguments) = parser.parse_args()
+    if DEBUG: print options
 
     if not options.PMID_or_DOI and not options.automatic:
         parser.print_help()
@@ -253,12 +268,25 @@ examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -
 
     return options, arguments
 
+def rename(src, dst, rename_flag):
+            if hashverb: print '###'
+            if rename_flag:
+                print src,'-*DO*->', dst
+                shutil.move(src, dst)
+            else:
+                print src,'-*NOT*->', dst
+                pass
+
 if '__main__' == __name__:
+    ###
+    hashverb = False
+    ###
     OPTIONS, ARGUMENTS = get_options()
     keywords = ''
     title = ''
+    print '-' * 40
     ###
-    print '###'
+    if hashverb: print '###'
     if OPTIONS.PMID_or_DOI:
         if is_it_pmid(OPTIONS.PMID_or_DOI):
             title = get_title_via_pmid(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)
@@ -267,23 +295,30 @@ if '__main__' == __name__:
             title = get_title_via_doi(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)# OPTIONS.reference, 
     ###
     if OPTIONS.automatic:
-        title = get_title_auto_from_pdf(OPTIONS.automatic, False, OPTIONS.keywords)
-        print 'FILENAME:', OPTIONS.automatic
-        basename =  os.path.basename(OPTIONS.automatic)
-        src = OPTIONS.automatic
-        dst = OPTIONS.automatic.replace(basename, title)
-        print '###'
-        if OPTIONS.rename:
-            print src,'-*DO*->', dst
-            shutil.move(src, dst)
+        filename = OPTIONS.filename
+        print 'FILENAME:', 
+        title = get_title_auto_from_pdf(filename, False, OPTIONS.keywords)
+        if title:
+            basename =  os.path.basename(filename)
+            src = filename
+            dst = filename.replace(basename, title)
+            rename(src, dst, OPTIONS.rename)
         else:
-            print src,'-*NOT*->', dst
+            ## title = False
             pass
     ###
     if title is not False:
         print title
-        print '###'
-        text2clip(title)
+        if hashverb: print '###'
+        try:
+            text2clip(title)
+        except:
+            pass
+        if OPTIONS.filename and not OPTIONS.automatic:
+            basename =  os.path.basename(OPTIONS.filename)
+            src = OPTIONS.filename
+            dst = OPTIONS.filename.replace(basename, title)
+            rename(src, dst, OPTIONS.rename)
     else:
         print 'Problem! Check your PMID/DOI'
-        print '###'
+        if hashverb: print '###'

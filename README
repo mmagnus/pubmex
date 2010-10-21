@@ -47,62 +47,49 @@ pubmex.py requiers:
 
 4) EXAMPLES
 --------------
-
-magnus@debian:~/workspace/pubmex$ python pubmex.py -h
+magnus@maximus:~/papers/rna$ pubmex.py -h
 Usage: pubmex.py [options] id
 
- examples: pubmex.py -p 17123955, pumex.py -d 10.1038/embor.2008.212
+ examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212;
+pubmex.py -a -f file.pdf -r
 
 Options:
   --version             show program's version number and exit
   -h, --help            show this help message and exit
-  -p PUBMED_ID, --pubmed_id=PUBMED_ID
-                        pass PMID of the paper
-  -t CUSTOMED_TITLE, --customed_title=CUSTOMED_TITLE
-                        pass your title for a pdf in a format 'RNA, structure'
-  -d DOI, --doi=DOI     pass DOI of the paper
-  -r, --reference       reference format
+  -p PMID_OR_DOI, --PMID_or_DOI=PMID_OR_DOI
+                        pass PMID/DOI of the paper
+  -f FILENAME, --filename=FILENAME
+                        filename of a pdf
+  -a, --automatic       try to get DOI automatically from a pdf
+  -k KEYWORDS, --keywords=KEYWORDS
+                        pass your keywords which makes a filename in a format
+                        'RNA, structure'
+  -r, --rename          rename files (only in a automatic mode)
 
 
-magnus@maximus:~/django/pubmexproject/pubmexapp/libs/pubmex$ python pubmex.py -p 20533529 
-###
+python pubmex.py -p 20533529 
+----------------------------------------
 Kosinski.Plotz-Identification.of.Lynch.syndrome.mutations.in.the.MLH1-PMS2.interface.that.disturb.dimerization.and.mismatch.repair-20533529.HUM.MUTAT.2010.pdf
-###
 
-The filename went to your clipboard :-) (hopefully)
----- 
-# define your own keywords
-magnus@maximus:~/django/pubmexproject/pubmexapp/libs/pubmex$ python pubmex.py -p 20533529 -k 'MLH1,PMS2'
+python pubmex.py -p 20533529 -k MLH1,PMS2
+----------------------------------------
 Kosinski.Plotz-MLH1.PMS2-20533529.HUM.MUTAT.2010.pdf
-----
 
-magnus@maximus:~/django/pubmexproject/pubmexapp/libs/pubmex$ python pubmex.py -p 10.1038/embor.2008.212
+python pubmex.py -p 10.1038/embor.2008.212
+----------------------------------------
 Kelley.Scott-The.evolution.of.biology.A.shift.towards.the.engineering.of.prediction-generating.tools.and.away.from.traditional.research.practice-19008917.EMBO.REP.2008.pdf
-----
 
-magnus@maximus:~/django/pubmexproject/pubmexapp/libs/pubmex$ python pubmex.py -a demo/demo01.pdf 
-###
-DOI: 10.1038/nature07600
-FILENAME: demo/demo01.pdf
-###
+python pubmex.py -a demo/demo01.pdf
+----------------------------------------
+FILENAME: DOI: 10.1038/nature07600
 demo/demo01.pdf -*NOT*-> demo/Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
 Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
-###
 
----- 
-## add -r to DO rename files
-
-magnus@maximus:~/django/pubmexproject/pubmexapp/libs/pubmex$ python pubmex.py -a demo/demo01.pdf -r
-###
-DOI: 10.1038/nature07600
-FILENAME: demo/demo01.pdf
-###
+pubmex.py -a demo/demo01.pdf -r
+----------------------------------------
+FILENAME: DOI: 10.1038/nature07600
 demo/demo01.pdf -*DO*-> demo/Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
 Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
-###
-
-The filename went to your clipboard :-) (hopefully)
-
 
 
 5) BUGS

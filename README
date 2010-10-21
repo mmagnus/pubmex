@@ -67,29 +67,35 @@ Options:
   -r, --rename          rename files (only in a automatic mode)
 
 
+# get a title based on PMID
 python pubmex.py -p 20533529 
 ----------------------------------------
 Kosinski.Plotz-Identification.of.Lynch.syndrome.mutations.in.the.MLH1-PMS2.interface.that.disturb.dimerization.and.mismatch.repair-20533529.HUM.MUTAT.2010.pdf
 
-python pubmex.py -p 20533529 -k MLH1,PMS2
+# get data based on PMID, change a title to keywords
+'python pubmex.py -p 20533529 -k MLH1,PMS2'
 ----------------------------------------
 Kosinski.Plotz-MLH1.PMS2-20533529.HUM.MUTAT.2010.pdf
 
+# get data based on DOI
 python pubmex.py -p 10.1038/embor.2008.212
 ----------------------------------------
 Kelley.Scott-The.evolution.of.biology.A.shift.towards.the.engineering.of.prediction-generating.tools.and.away.from.traditional.research.practice-19008917.EMBO.REP.2008.pdf
 
-python pubmex.py -a demo/demo01.pdf
+# get data based on a given pdf file, show a new new, DO NOT rename
+python pubmex.py -a -f demo/demo01.pdf
 ----------------------------------------
 FILENAME: DOI: 10.1038/nature07600
 demo/demo01.pdf -*NOT*-> demo/Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
 Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
 
-pubmex.py -a demo/demo01.pdf -r
+# get data based on a given pdf file, show a new new, DO rename
+pubmex.py -a -f demo/demo01.pdf -r
 ----------------------------------------
 FILENAME: DOI: 10.1038/nature07600
 demo/demo01.pdf -*DO*-> demo/Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
 Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
+
 
 
 5) BUGS

@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-
+#-*- coding: utf-8 -*-
 """
 copyright 2010 Marcin Magnus
 
@@ -30,8 +30,9 @@ import re
 import tempfile
 import subprocess
 import shutil
+import urllib 
 
-VERSION = '0.02'
+VERSION = '0.03'
 MAIL='your_mail@gmail.com'
 DEBUG = False
 JDICT={'NUCLEIC.ACIDS.RES': 'NAR'}
@@ -158,13 +159,14 @@ def doi2pmid(doi):
 
 def get_title_auto_from_pdf(filename, reference, customed_title, verbose = 0):
     doi = get_doi_from_pdf(filename)
+    if verbose: print 'doiii', doi
     if doi:
         return get_title_via_doi(doi, reference, customed_title, verbose = 0)
     else:
         print 'DOI has *not* been found automatically!'
         return False
 
-def get_doi_from_pdf(filename, verbose = 1):
+def get_doi_from_pdf(filename, verbose = False):
     f = tempfile.NamedTemporaryFile()
     #print f.name
     ## degum
@@ -174,28 +176,63 @@ def get_doi_from_pdf(filename, verbose = 1):
         txtfn = 'temp'
         print 'DEBUG - temp generated'
     f.close()
+    if verbose: print txtfn
     #args = ['pdftotext', filename, txtfn]#f.name]
     args = ['pdftotext', filename, txtfn]
     p = subprocess.call(args)
     doi = False
     if p == 0:# it means it's OK
         txt = open(txtfn).read()
+        if verbose: print txtfn, "is going to be opend"
         ###
-        rex = re.compile('doi:(?P<doi>.*\.\w+\.\w+)').search(txt)
-        rex2 = re.compile('DOI\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
-        rex3 = re.compile('DOI:\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
-        rex4 = re.compile('doi:(?P<doi>\d+.\d+/[\w/]+)').search(txt)
-        rex5 = re.compile('DOI:\s+(?P<doi>.+)').search(txt)
-        if rex: doi = rex.group('doi')
-        if rex2: doi = rex2.group('doi')
-        if rex3: doi = rex3.group('doi')
-        if rex4: doi = rex4.group('doi')
-        if rex5: doi = rex5.group('doi')
-        if verbose: print 'DOI:', doi
+        #rex = re.compile('doi:(?P<doi>.*\.\w+\.\w+)').search(txt)
+        #rex2 = re.compile('DOI\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
+        #rex3 = re.compile('DOI:\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
+        #rex4 = re.compile('doi:(?P<doi>\d+.\d+/[\w/]+)').search(txt)
+        #rex5 = re.compile('DOI:\s+(?P<doi>.+)').search(txt)
+        ### cleaning up the text
+        txt = txt.upper()
+        txt = txt.replace('–', '-')
+        #print txt
+        #rex6 = re.compile('doi:\s+(?P<doi>.+)').search(txt)
+        #if rex: doi = rex.group('doi')
+        #if rex2: doi = rex2.group('doi')
+        #if rex3: doi = rex3.group('doi')
+        #if rex4: doi = rex4.group('doi')
+        #if rex5: doi = rex5.group('doi')
+        #if rex6: doi = rex6.group('doi')        
 
-        ###
+        doi_line_re = re.compile('(?P<doi>.*DOI.*)').search(txt)
+        doi_line = doi_line_re.group('doi')
+        if verbose: print 'DOI:', doi_line
+        rrr = 'DOI:{0,1}\s{0,1}(?P<doi>[\w\d\.\-\\\/\–]+)'
+        rex = re.compile(rrr).search(doi_line)
+        doi = rex.group('doi')
+        if verbose: print 'doi - found: ', doi
     return doi
 
+def get_value(field, txt, verbose = False):
+    #rex = re.compile('<meta name="' + field + '" content="(?P<value>.+)">').search(txt)
+    c = '(?P<line><meta .+"' + field + '".+>)'
+    if verbose: print c
+    rex = re.compile(c).search(txt)
+    if rex:
+        import sys
+        line = rex.group('line')
+        if verbose: print line
+        b = 'content="(?P<pmid>\d+)"'
+        bb = re.compile(b).search(line)
+        return bb.group('pmid')
+    ### 
+
+###def get_title_via_doi_net(doi):
+def get_pmid_via_doi_net(doi):
+    params = urllib.urlencode({'hdl': doi}) ### tutaj musisz wyczytac pola za formularza, z html 
+    #print params
+    f = urllib.urlopen("http://dx.doi.org/", params) ### link gdzie wysylane sa twoje dane, adres skryptu cgi
+    content = f.read()
+    #print content
+    return get_value('citation_pmid', content)
 
 def get_title_via_doi(doi, reference, customed_title, verbose = 1):
     """
@@ -219,8 +256,9 @@ def get_title_via_doi(doi, reference, customed_title, verbose = 1):
     if pmid:
         return get_title_via_pmid(pmid,reference, customed_title)
     else: ### return problem
-        return False
-        
+        print 'ERROR: \t\tNot found in PubMed'
+        pmid = get_pmid_via_doi_net(doi)
+        return get_title_via_pmid(pmid,reference, customed_title)
 
 def get_options(verbose=False):
     """
@@ -271,10 +309,10 @@ examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -
 def rename(src, dst, rename_flag):
             if hashverb: print '###'
             if rename_flag:
-                print src,'-*DO*->', dst
+                print 'RENAME:\t\t', src,'-*DO*->', dst
                 shutil.move(src, dst)
             else:
-                print src,'-*NOT*->', dst
+                print '(fake, use -r)\t', src,'-*NOT*->', dst
                 pass
 
 if '__main__' == __name__:
@@ -296,8 +334,9 @@ if '__main__' == __name__:
     ###
     if OPTIONS.automatic:
         filename = OPTIONS.filename
-        print 'FILENAME:', 
+        print 'FILENAME:\t', filename
         title = get_title_auto_from_pdf(filename, False, OPTIONS.keywords)
+        print 'TITLE: \t\t', title
         if title:
             basename =  os.path.basename(filename)
             src = filename
@@ -308,7 +347,6 @@ if '__main__' == __name__:
             pass
     ###
     if title is not False:
-        print title
         if hashverb: print '###'
         try:
             text2clip(title)
@@ -320,5 +358,5 @@ if '__main__' == __name__:
             dst = OPTIONS.filename.replace(basename, title)
             rename(src, dst, OPTIONS.rename)
     else:
-        print 'Problem! Check your PMID/DOI'
+        print 'ERROR: \t\tProblem! Check your PMID/DOI'
         if hashverb: print '###'

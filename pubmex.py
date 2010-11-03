@@ -36,6 +36,8 @@ VERSION = '0.03'
 MAIL='your_mail@gmail.com'
 DEBUG = False
 JDICT={'NUCLEIC.ACIDS.RES': 'NAR'}
+ADD_PMID = False
+
 
 def dot(text):
     """ change ' '(space) into . ,e.g. Marcin Magnus -> Marcin.Magnus"""
@@ -119,7 +121,10 @@ def get_title_via_pmid(pmid, reference, customed_title, verbose = 0):
             title += '-'+title_of_pub
         else:
             title += '-'+prepare_customed_title(customed_title)
-        title += '-'+pmid
+
+        if ADD_PMID:
+            title += '-'+pmid
+
         title += '.'+dot(summary_dict['Source']).upper()
         title += '.'+str(summary_dict['PubDate'].split()[0])
         title += '.pdf'

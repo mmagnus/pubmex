@@ -365,3 +365,4 @@ if '__main__' == __name__:
     else:
         print 'ERROR: \t\tProblem! Check your PMID/DOI'
         if hashverb: print '###'
+    print title

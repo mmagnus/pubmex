@@ -27,10 +27,17 @@ Using xclip pubmex.py automatically copy the title to the clipboard. Just type C
 2a) LINUX
 --------------
 
-unzip & run it :-)
-	- xclip (http://sourceforge.net/projects/xclip/)
+INSTALL
 
-2b) WINDOWS (NOT TESTED!!!)
+	- xclip (http://sourceforge.net/projects/xclip/)
+	- biopython (http://biopython.org/wiki/Biopython)
+
+	For DEBIAN-based system:
+	apt-get install xclip python-biopython 
+
+unzip & run it :-)
+
+2b) WINDOWS (NOT TESTED!!!!!!!)
 --------------
 
 Install:
@@ -39,63 +46,12 @@ Install:
 	- GTK+ http://sourceforge.net/projects/gtk-win/ direct link http://downloads.sourceforge.net/project/gtk-win/GTK%2B%20Runtime%20Environment/GTK%2B%202.16/gtk2-runtime-2.16.6-2010-02-24-ash.exe?use_mirror=garr
 	- pyGTK http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.16/pygtk-2.16.0+glade.win32-py2.6.exe
 
-3) DEPENDENCIES
---------------
-pubmex.py requiers:
-	- python 2.6 (http://www.python.org/)
-	- biopython (http://biopython.org/wiki/Main_Page)
+
 
 4) EXAMPLES
 --------------
-magnus@maximus:~/papers/rna$ pubmex.py -h
-Usage: pubmex.py [options] id
 
- examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212;
-pubmex.py -a -f file.pdf -r
-
-Options:
-  --version             show program's version number and exit
-  -h, --help            show this help message and exit
-  -p PMID_OR_DOI, --PMID_or_DOI=PMID_OR_DOI
-                        pass PMID/DOI of the paper
-  -f FILENAME, --filename=FILENAME
-                        filename of a pdf
-  -a, --automatic       try to get DOI automatically from a pdf
-  -k KEYWORDS, --keywords=KEYWORDS
-                        pass your keywords which makes a filename in a format
-                        'RNA, structure'
-  -r, --rename          rename files (only in a automatic mode)
-
-
-# get a title based on PMID
-python pubmex.py -p 20533529 
-----------------------------------------
-Kosinski.Plotz-Identification.of.Lynch.syndrome.mutations.in.the.MLH1-PMS2.interface.that.disturb.dimerization.and.mismatch.repair-20533529.HUM.MUTAT.2010.pdf
-
-# get data based on PMID, change a title to keywords
-'python pubmex.py -p 20533529 -k MLH1,PMS2'
-----------------------------------------
-Kosinski.Plotz-MLH1.PMS2-20533529.HUM.MUTAT.2010.pdf
-
-# get data based on DOI
-python pubmex.py -p 10.1038/embor.2008.212
-----------------------------------------
-Kelley.Scott-The.evolution.of.biology.A.shift.towards.the.engineering.of.prediction-generating.tools.and.away.from.traditional.research.practice-19008917.EMBO.REP.2008.pdf
-
-# get data based on a given pdf file, show a new new, DO NOT rename
-python pubmex.py -a -f demo/demo01.pdf
-----------------------------------------
-FILENAME: DOI: 10.1038/nature07600
-demo/demo01.pdf -*NOT*-> demo/Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
-Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
-
-# get data based on a given pdf file, show a new new, DO rename
-pubmex.py -a -f demo/demo01.pdf -r
-----------------------------------------
-FILENAME: DOI: 10.1038/nature07600
-demo/demo01.pdf -*DO*-> demo/Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
-Jovanovic-Talisman.Chait-Artificial.nanopores.that.mimic.the.transport.selectivity.of.the.nuclear.pore.complex-19098896.NATURE.2009.pdf
-
+Visit https://github.com/m4rx9/pubmex/wiki
 
 
 5) BUGS

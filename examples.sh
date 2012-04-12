@@ -16,5 +16,5 @@ python pubmex.py -a -f demo/demo01.pdf
 echo
 echo '# get data based on a given pdf file, show a new new, DO rename'
 echo 'pubmex.py -a -f demo/demo01.pdf -r'
-pubmex.py -a -f demo/demo01.pdf -r
+python pubmex.py -a -f demo/demo01.pdf -r
 

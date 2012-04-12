@@ -8,11 +8,12 @@ INSTALL
 
 	- xclip (http://sourceforge.net/projects/xclip/)
 	- biopython (http://biopython.org/wiki/Biopython)
+	- pdftotext (http://linux.die.net/man/1/pdftotext)
 
 	For DEBIAN-based system:
-	apt-get install xclip python-biopython 
+	apt-get install xclip python-biopython pdftotext
 
-unzip & run it :-)
+unzip & run it :-) Set PATHs to pubmex.py 
 
 WINDOWS (NOT TESTED!!!!!!!)
 --------------

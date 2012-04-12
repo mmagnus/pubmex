@@ -1,5 +1,11 @@
-pubmex.py
-===========================
+
+			Pu(b)mex
+			version 0.2
+
+
+			Marcin Magnus
+			m.magnus@o2.pl
+--------------------------------------------------------------------------------
 
 TABLE OF CONTENTS
 -----------------
@@ -12,6 +18,7 @@ TABLE OF CONTENTS
 6) COPYRIGHT AND LICENCE
 7) AUTHOR INFORMATION
 8) ACKNOWLEDGEMENTS
+9) HISTORY
 
 
 1) DESCRIPTION
@@ -24,29 +31,7 @@ Using xclip pubmex.py automatically copy the title to the clipboard. Just type C
 2) INSTALLATION
 --------------
 
-2a) LINUX
---------------
-
-INSTALL
-
-	- xclip (http://sourceforge.net/projects/xclip/)
-	- biopython (http://biopython.org/wiki/Biopython)
-
-	For DEBIAN-based system:
-	apt-get install xclip python-biopython 
-
-unzip & run it :-)
-
-2b) WINDOWS (NOT TESTED!!!!!!!)
---------------
-
-Install:
-	- Python http://www.python.org/ftp/python/2.6.4/python-2.6.4.msi
-	- Biopython http://biopython.org/DIST/biopython-1.53.win32-py2.6.exe
-	- GTK+ http://sourceforge.net/projects/gtk-win/ direct link http://downloads.sourceforge.net/project/gtk-win/GTK%2B%20Runtime%20Environment/GTK%2B%202.16/gtk2-runtime-2.16.6-2010-02-24-ash.exe?use_mirror=garr
-	- pyGTK http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.16/pygtk-2.16.0+glade.win32-py2.6.exe
-
-
+Look at INSTALL file.
 
 4) EXAMPLES
 --------------
@@ -67,10 +52,17 @@ under the same terms as GLP
 
 7) AUTHOR INFORMATION
 
-Marcin Magnus, magnus@genesilico.pl
+Marcin Magnus, m.magnus@o2.pl
 
 8) ACKNOWLEDGEMENTS
 
-:-)
+...
+
+9) HISTORY
+
+ version 0.2
+ -- small changes
+
+
 
 

@@ -32,11 +32,19 @@ import subprocess
 import shutil
 import urllib 
 
-VERSION = '0.03'
+VERSION = '0.2'
 MAIL='your_mail@gmail.com'
-DEBUG = False
+DEBUG = True
 JDICT={'NUCLEIC.ACIDS.RES': 'NAR'}
 ADD_PMID = False
+###############################
+if not DEBUG:
+    f = tempfile.NamedTemporaryFile()
+    TEMPFILE_NAME = f.name
+else:
+    TEMPFILE_NAME = 'temp'
+    print 'DEBUG - temp generated'
+###############################
 
 
 def dot(text):
@@ -79,7 +87,40 @@ def is_it_pmid(id):
     else:
         return False
     
+def get_pmid_via_search_in_pubmex_line_by_line(text = 'RNA tertiary structure prediction with ModeRNA.'): #problem?!
+    """
 
+    http://baoilleach.blogspot.com/2008/02/searching-pubmed-with-python.html
+    """
+    
+    ### branie tych lini chyba powinno byc w innej lini !!!! funkcja ktora zczytuje kolejen linie a inna aby odczytywac czy dla naej lini jest unikalny wpis w pubmed
+    #1. dla lini pubmed
+    #2. dla unikalnego pmid sprawdz czy nazwiska autorow sa w 10 pierwszych liniach textu! !!!
+
+    #txtfn = TEMPFILE_NAME
+    #args = ['pdftotext', filename, txtfn]
+    #p = subprocess.call(args)
+    #doi = False
+    #if p == 0:# it means it's OK
+    #    txt = open(txtfn).read()
+    #    if verbose: print txtfn, "is going to be opend"
+        ###
+
+
+
+    result = Entrez.esearch(db = "pubmed", term = text, email = MAIL)
+    d = Entrez.read(result)
+    """
+    {u'Count': '1', u'RetMax': '1', u'IdList': ['21896613'], u'TranslationStack': [{u'Count': '528381', u'Field': 'MeSH Terms', u'Term': '"rna"[MeSH Terms]', u'Explode': 'Y'}, {u'Count': '643228', u'Field': 'All Fields', u'Term': '"rna"[All Fields]', u'Explode': 'Y'}, 'OR', 'GROUP', {u'Count': '138804', u'Field': 'All Fields', u'Term': 'tertiary[All Fields]', u'Explode': 'Y'}, 'AND', {u'Count': '3139', u'Field': 'Journal', u'Term': '"Structure"[Journal]', u'Explode': 'Y'}, {u'Count': '888752', u'Field': 'All Fields', u'Term': '"structure"[All Fields]', u'Explode': 'Y'}, 'OR', 'GROUP', 'AND', {u'Count': '103986', u'Field': 'All Fields', u'Term': 'prediction[All Fields]', u'Explode': 'Y'}, 'AND', {u'Count': '779', u'Field': 'All Fields', u'Term': 'ModeRNA.[All Fields]', u'Explode': 'Y'}, 'AND', 'GROUP'], u'WarningList': {u'OutputMessage': [], u'PhraseIgnored': ['with'], u'QuotedPhraseNotFound': []}, u'TranslationSet': [{u'To': '"rna"[MeSH Terms] OR "rna"[All Fields]', u'From': 'RNA'}, {u'To': '"Structure"[Journal] OR "structure"[All Fields]', u'From': 'structure'}], u'RetStart': '0', u'QueryTranslation': '("rna"[MeSH Terms] OR "rna"[All Fields]) AND tertiary[All Fields] AND ("Structure"[Journal] OR "structure"[All Fields]) AND prediction[All Fields] AND ModeRNA.[All Fields]'}
+    """
+    print d['Count']
+    pmid =  d['IdList']    
+    print pmid
+    result = Entrez.esummary(db = "pubmed", id = pmid, email = MAIL)
+    summary_dict = Entrez.read(result)[0]    
+    print summary_dict
+    print summary_dict['AuthorList']
+    
 def get_title_via_pmid(pmid, reference, customed_title, verbose = 0):
     """
     GET:
@@ -171,18 +212,12 @@ def get_title_auto_from_pdf(filename, reference, customed_title, verbose = 0):
         print 'DOI has *not* been found automatically!'
         return False
 
+#def get_doi_from_pdf(filename, verbose = True):
+
+
 def get_doi_from_pdf(filename, verbose = False):
-    f = tempfile.NamedTemporaryFile()
-    #print f.name
-    ## degum
-    if not DEBUG:
-        txtfn = f.name
-    else:
-        txtfn = 'temp'
-        print 'DEBUG - temp generated'
-    f.close()
-    if verbose: print txtfn
     #args = ['pdftotext', filename, txtfn]#f.name]
+    txtfn = TEMPFILE_NAME
     args = ['pdftotext', filename, txtfn]
     p = subprocess.call(args)
     doi = False
@@ -206,14 +241,15 @@ def get_doi_from_pdf(filename, verbose = False):
         #if rex4: doi = rex4.group('doi')
         #if rex5: doi = rex5.group('doi')
         #if rex6: doi = rex6.group('doi')        
-
+        doi = ''
         doi_line_re = re.compile('(?P<doi>.*DOI.*)').search(txt)
-        doi_line = doi_line_re.group('doi')
-        if verbose: print 'DOI:', doi_line
-        rrr = 'DOI:{0,1}\s{0,1}(?P<doi>[\w\d\.\-\\\/\–]+)'
-        rex = re.compile(rrr).search(doi_line)
-        doi = rex.group('doi')
-        if verbose: print 'doi - found: ', doi
+        if doi_line_re:
+            doi_line = doi_line_re.group('doi')
+            if verbose: print 'DOI:', doi_line
+            rrr = 'DOI:{0,1}\s{0,1}(?P<doi>[\w\d\.\-\\\/\–]+)'
+            rex = re.compile(rrr).search(doi_line)
+            doi = rex.group('doi')
+            if verbose: print 'doi - found: ', doi
     return doi
 
 def get_value(field, txt, verbose = False):
@@ -232,9 +268,9 @@ def get_value(field, txt, verbose = False):
 
 ###def get_title_via_doi_net(doi):
 def get_pmid_via_doi_net(doi):
-    params = urllib.urlencode({'hdl': doi}) ### tutaj musisz wyczytac pola za formularza, z html 
+    params = urllib.urlencode({'hdl': doi}) # here you must read in a field from the form
     #print params
-    f = urllib.urlopen("http://dx.doi.org/", params) ### link gdzie wysylane sa twoje dane, adres skryptu cgi
+    f = urllib.urlopen("http://dx.doi.org/", params) #the link where to send the data
     content = f.read()
     #print content
     return get_value('citation_pmid', content)
@@ -286,7 +322,7 @@ examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -
                       help = "filename of a pdf")
 
     parser.add_option("--automatic", "-a", action="store_true",
-                      help = "try to get DOI automatically from a pdf")
+                      help = "try to get DOI automatically from a pdf, this option DOES NOT RENAME, use -r to force renaming")
 
     parser.add_option("--keywords", "-k", type="string", #dest='customed_title', 
                       help = """pass your keywords which makes a filename in a format 'RNA, structure' """ )
@@ -295,7 +331,7 @@ examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -
     #                  help = "reference format", default=False)
     
     parser.add_option("--rename", "-r", action="store_true",
-                      help = "rename files (only in a automatic mode)", default=False)
+                      help = "DOES rename files (only in a automatic mode)", default=False)
 
 
     if verbose:
@@ -321,6 +357,7 @@ def rename(src, dst, rename_flag):
                 pass
 
 if '__main__' == __name__:
+
     ###
     hashverb = False
     ###
@@ -364,5 +401,6 @@ if '__main__' == __name__:
             rename(src, dst, OPTIONS.rename)
     else:
         print 'ERROR: \t\tProblem! Check your PMID/DOI'
+        get_pmid_via_search_in_pubmex_line_by_line(TEMPFILE_NAME)#problem?!
         if hashverb: print '###'
     print title

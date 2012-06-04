@@ -22,7 +22,7 @@ DEP:
  - xclip http://sourceforge.net/projects/xclip/
 """
 
-from Bio import Entrez#biopython
+from Bio import Entrez
 import sys
 import optparse
 import os
@@ -32,7 +32,7 @@ import subprocess
 import shutil
 import urllib 
 
-VERSION = '0.2'
+VERSION = '0.3a'
 MAIL='your_mail@gmail.com'
 DEBUG = True
 JDICT={'NUCLEIC.ACIDS.RES': 'NAR'}
@@ -45,16 +45,16 @@ else:
     TEMPFILE_NAME = 'temp'
     print 'DEBUG - temp generated'
 ###############################
-
-
+def hr():
+    """Draw -------------."""
+    print '-' * 80
+        
 def dot(text):
-    """ change ' '(space) into . ,e.g. Marcin Magnus -> Marcin.Magnus"""
+    """Change ' '(space) into . ,e.g. Marcin Magnus -> Marcin.Magnus."""
     return text.replace(' ','.')
 
 def clean_string(text):
-    """
-    execute operations to clean up a given string
-    """
+    """ execute operations to clean up a given string """
     text = text.replace(')','.')
     text = text.replace('[','.')
     text = text.replace(']','.')
@@ -71,8 +71,9 @@ def clean_string(text):
 
 def prepare_customed_title(text):
     """
-    GET:
-    - text = customed_title, e.g. 'RNA, structure' or 'RNA structure'
+
+    input:
+     * text: customed_title, e.g. 'RNA, structure' or 'RNA structure'
     """
     text = text.replace(',',' ')
     text = re.sub('\s+','.',text)
@@ -89,7 +90,6 @@ def is_it_pmid(id):
     
 def get_pmid_via_search_in_pubmex_line_by_line(text = 'RNA tertiary structure prediction with ModeRNA.'): #problem?!
     """
-
     http://baoilleach.blogspot.com/2008/02/searching-pubmed-with-python.html
     """
     
@@ -123,26 +123,22 @@ def get_pmid_via_search_in_pubmex_line_by_line(text = 'RNA tertiary structure pr
     
 def get_title_via_pmid(pmid, reference, customed_title, verbose = 0):
     """
-    GET:
-    - pmid of a publication, e.g. 17123955
-    and so on..
-    - v(erbose) 
-    DO:
-    - use biopython to get summary dict 
+    use biopython to get summary dict
     
-    summary_dict 
-    
-    {'DOI': '10.1261/rna.283207', 'Title': 'Conversion of pre-RISC to holo-RISC by Ago2 during assembly of RNAi complexes.', 'Source': 'RNA', 'PmcRefCount': 9, 'Issue': '1', 'SO': '2007 Jan;13(1):22-9', 'ISSN': '1355-8382', 'Volume': '13', 'FullJournalName': 'RNA (New York, N.Y.)', 'RecordStatus': 'PubMed - indexed for MEDLINE', 'ESSN': '1469-9001', 'ELocationID': '', 'Pages': '22-9', 'PubStatus': 'ppublish+epublish', 'AuthorList': ['Kim K', 'Lee YS', 'Carthew RW'], 'EPubDate': '2006 Nov 22', 'PubDate': '2007 Jan', 'NlmUniqueID': '9509184', 'LastAuthor': 'Carthew RW', 'ArticleIds': {'pii': 'rna.283207', 'medline': [], 'pubmed': ['17123955'], 'pmc': 'PMC1705758', 'pmcid': 'pmc-id: PMC1705758;', 'doi': '10.1261/rna.283207'}, u'Item': [], 'History': {'medline': ['2007/01/31 09:00'], 'pubmed': ['2006/11/25 09:00'], 'entrez': '2006/11/25 09:00', 'aheadofprint': '2006/11/22 00:00'}, 'LangList': ['English'], 'HasAbstract': 1, 'References': [], 'PubTypeList': ['Journal Article'], u'Id': '17123955'}
+    summary_dict: {'DOI': '10.1261/rna.283207', 'Title': 'Conversion of pre-RISC to holo-RISC by Ago2 during assembly of RNAi complexes.', 'Source': 'RNA', 'PmcRefCount': 9, 'Issue': '1', 'SO': '2007 Jan;13(1):22-9', 'ISSN': '1355-8382', 'Volume': '13', 'FullJournalName': 'RNA (New York, N.Y.)', 'RecordStatus': 'PubMed - indexed for MEDLINE', 'ESSN': '1469-9001', 'ELocationID': '', 'Pages': '22-9', 'PubStatus': 'ppublish+epublish', 'AuthorList': ['Kim K', 'Lee YS', 'Carthew RW'], 'EPubDate': '2006 Nov 22', 'PubDate': '2007 Jan', 'NlmUniqueID': '9509184', 'LastAuthor': 'Carthew RW', 'ArticleIds': {'pii': 'rna.283207', 'medline': [], 'pubmed': ['17123955'], 'pmc': 'PMC1705758', 'pmcid': 'pmc-id: PMC1705758;', 'doi': '10.1261/rna.283207'}, u'Item': [], 'History': {'medline': ['2007/01/31 09:00'], 'pubmed': ['2006/11/25 09:00'], 'entrez': '2006/11/25 09:00', 'aheadofprint': '2006/11/22 00:00'}, 'LangList': ['English'], 'HasAbstract': 1, 'References': [], 'PubTypeList': ['Journal Article'], u'Id': '17123955'}
 
-    RETURN:
-    - formated title(string) 
+    input:
+     * pmid of a publication, e.g. 17123955
+       and so on..
+     * v(erbose) 
 
-    need xclip - http://sourceforge.net/projects/xclip/
+    output:
+     * formated title(string) 
     """
     result = Entrez.esummary(db = "pubmed", id = pmid, email = MAIL)
     try:
         summary_dict = Entrez.read(result)[0]    
-    except RuntimeError: #### there is NO pmd like this
+    except RuntimeError: # there is NO pmd like this
         return False
 
     if verbose:
@@ -171,30 +167,24 @@ def get_title_via_pmid(pmid, reference, customed_title, verbose = 0):
         title += '.pdf'
 
         title = clean_string(title)
-        ###
+
         for k in JDICT.keys():
             title = title.replace(k, JDICT[k])
-            
-    else:##reference
+    # TODO refernece
+    else:
         title = ", ".join(summary_dict['AuthorList']) + " " + summary_dict['Title'].strip() + " "\
             + summary_dict['Source'].strip() +" "\
             + summary_dict['SO']
-
-
     return title
 
 def text2clip(title, verbose = 0):
+    """ output is sent to the clipboard """
     cmd = "echo '"+title.strip() + "'| xclip -selection clipboard"
-    if verbose:
-        print cmd
-    #print 'The filename went to your clipboard :-) (hopefully)'
     os.system(cmd)
 
 def doi2pmid(doi):
-    """
-    Get a DOI based on a give DOI
-    """
-    result = Entrez.esearch(db = "pubmed", term = doi, email = MAIL) ## *need to be improved*
+    """ get a DOI based on a give DOI """
+    result = Entrez.esearch(db = "pubmed", term = doi, email = MAIL) ## *needto be improved*
     out = Entrez.read(result)
     idlist = out["IdList"]
     if DEBUG: print 'IdList', idlist
@@ -205,26 +195,34 @@ def doi2pmid(doi):
 
 def get_title_auto_from_pdf(filename, reference, customed_title, verbose = 0):
     doi = get_doi_from_pdf(filename)
-    if verbose: print 'doiii', doi
     if doi:
         return get_title_via_doi(doi, reference, customed_title, verbose = 0)
     else:
         print 'DOI has *not* been found automatically!'
         return False
 
-#def get_doi_from_pdf(filename, verbose = True):
-
-
 def get_doi_from_pdf(filename, verbose = False):
+    """ convert filename to txt, several regular expression are used to get DOI
+
+    input:
+    * filename
+    * verbose
+
+    output:
+    * doi
+
+    caution:
+    * pdftotext: is required
+    """
     #args = ['pdftotext', filename, txtfn]#f.name]
     txtfn = TEMPFILE_NAME
     args = ['pdftotext', filename, txtfn]
     p = subprocess.call(args)
     doi = False
-    if p == 0:# it means it's OK
+    if p == 0:
         txt = open(txtfn).read()
         if verbose: print txtfn, "is going to be opend"
-        ###
+        ### TODO 
         #rex = re.compile('doi:(?P<doi>.*\.\w+\.\w+)').search(txt)
         #rex2 = re.compile('DOI\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
         #rex3 = re.compile('DOI:\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
@@ -253,40 +251,33 @@ def get_doi_from_pdf(filename, verbose = False):
     return doi
 
 def get_value(field, txt, verbose = False):
-    #rex = re.compile('<meta name="' + field + '" content="(?P<value>.+)">').search(txt)
+    """ """    
     c = '(?P<line><meta .+"' + field + '".+>)'
-    if verbose: print c
     rex = re.compile(c).search(txt)
     if rex:
-        import sys
         line = rex.group('line')
         if verbose: print line
         b = 'content="(?P<pmid>\d+)"'
         bb = re.compile(b).search(line)
         return bb.group('pmid')
-    ### 
 
-###def get_title_via_doi_net(doi):
 def get_pmid_via_doi_net(doi):
+    """ give PMID using give DOI """
     params = urllib.urlencode({'hdl': doi}) # here you must read in a field from the form
-    #print params
     f = urllib.urlopen("http://dx.doi.org/", params) #the link where to send the data
     content = f.read()
-    #print content
     return get_value('citation_pmid', content)
 
 def get_title_via_doi(doi, reference, customed_title, verbose = 1):
-    """
-    GET:
-    - doi, e.g.
-    and so on..
-    - v(erbose) 
-    DO:
-    - search in pubmed a paper based on given doi,
-    - get the paper, fetch pmid
-    - get_title_via_pmid
-    RETURN:
-    - title(string)
+    """ search in pubmex for a paper based on give doi. Get the paper, fetch pmid, get_title_via_pmid
+
+    input: 
+    * doi: e.g.
+      and so on..
+    * v(erbose) 
+
+    output:
+    * title: string
     """
     doi=doi.replace('DOI:','')
     doi=doi.replace('doi:','')
@@ -296,15 +287,13 @@ def get_title_via_doi(doi, reference, customed_title, verbose = 1):
     if DEBUG: print 'PMID:', pmid
     if pmid:
         return get_title_via_pmid(pmid,reference, customed_title)
-    else: ### return problem
+    else:
         print 'ERROR: \t\tNot found in PubMed'
         pmid = get_pmid_via_doi_net(doi)
         return get_title_via_pmid(pmid,reference, customed_title)
 
 def get_options(verbose=False):
-    """
-    get options
-    """
+    """ display options """
     usage = "%prog [options] id"
     description = """
 examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -a -f file.pdf -r
@@ -324,9 +313,10 @@ examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -
     parser.add_option("--automatic", "-a", action="store_true",
                       help = "try to get DOI automatically from a pdf, this option DOES NOT RENAME, use -r to force renaming")
 
-    parser.add_option("--keywords", "-k", type="string", #dest='customed_title', 
+    parser.add_option("--keywords", "-k", type="string",
                       help = """pass your keywords which makes a filename in a format 'RNA, structure' """ )
 
+    # TODO
     #parser.add_option("--reference", "-r", action="store_true",
     #                  help = "reference format", default=False)
     
@@ -346,34 +336,26 @@ examples: pubmex.py -p 17123955; pumex.py -p 10.1038/embor.2008.212; pubmex.py -
         sys.exit(1)
 
     return options, arguments
-
 def rename(src, dst, rename_flag):
-            if hashverb: print '###'
-            if rename_flag:
-                print 'RENAME:\t\t', src,'-*DO*->', dst
-                shutil.move(src, dst)
-            else:
-                print '(fake, use -r)\t', src,'-*NOT*->', dst
-                pass
+    if rename_flag:
+        print 'RENAME:\t\t', src,'-*DO*->', dst
+        shutil.move(src, dst)
+    else:
+        print '(fake, use -r)\t', src,'-*NOT*->', dst
+        pass
 
 if '__main__' == __name__:
-
-    ###
-    hashverb = False
-    ###
     OPTIONS, ARGUMENTS = get_options()
     keywords = ''
     title = ''
-    print '-' * 40
-    ###
-    if hashverb: print '###'
+    hr()
     if OPTIONS.PMID_or_DOI:
         if is_it_pmid(OPTIONS.PMID_or_DOI):
             title = get_title_via_pmid(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)
         else:
 
             title = get_title_via_doi(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)# OPTIONS.reference, 
-    ###
+
     if OPTIONS.automatic:
         filename = OPTIONS.filename
         print 'FILENAME:\t', filename
@@ -384,12 +366,8 @@ if '__main__' == __name__:
             src = filename
             dst = filename.replace(basename, title)
             rename(src, dst, OPTIONS.rename)
-        else:
-            ## title = False
-            pass
-    ###
+
     if title is not False:
-        if hashverb: print '###'
         try:
             text2clip(title)
         except:
@@ -402,5 +380,4 @@ if '__main__' == __name__:
     else:
         print 'ERROR: \t\tProblem! Check your PMID/DOI'
         get_pmid_via_search_in_pubmex_line_by_line(TEMPFILE_NAME)#problem?!
-        if hashverb: print '###'
     print title

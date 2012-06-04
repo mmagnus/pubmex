@@ -37,6 +37,8 @@ MAIL='your_mail@gmail.com'
 DEBUG = True
 JDICT={'NUCLEIC.ACIDS.RES': 'NAR'}
 ADD_PMID = False
+WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and'
+
 ###############################
 if not DEBUG:
     f = tempfile.NamedTemporaryFile()
@@ -55,6 +57,8 @@ def dot(text):
 
 def clean_string(text):
     """ execute operations to clean up a given string """
+    for word in WORDS_TO_REMOVE.split(','):
+        text = text.replace('.' + word.strip() + '.', '.')
     text = text.replace(')','.')
     text = text.replace('[','.')
     text = text.replace(']','.')

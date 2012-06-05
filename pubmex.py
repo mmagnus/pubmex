@@ -38,8 +38,7 @@ MAIL = 'your_mail@gmail.com'
 DEBUG = True
 JDICT = {'NUCLEIC.ACIDS.RES': 'NAR'}
 ADD_PMID = False
-WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and'
-
+WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and, by, during'
 ###############################
 if not DEBUG:
     f = tempfile.NamedTemporaryFile()

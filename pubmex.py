@@ -311,7 +311,7 @@ def get_title_via_doi(doi, reference, customed_title, verbose=1):
     if pmid:
         return get_title_via_pmid(pmid, reference, customed_title)
     else:
-        print 'ERROR: \t\tNot found in PubMed'
+        print 'ERROR: \t\tNot found in PubMed, although DOI (' + doi + ') was detected in the pdf!'
         pmid = get_pmid_via_doi_net(doi)
         return get_title_via_pmid(pmid, reference, customed_title)
 

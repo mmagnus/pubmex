@@ -168,7 +168,7 @@ def get_title_via_pmid(pmid, reference, customed_title, verbose=0):
         if ADD_PMID:
             title += '-' + pmid
 
-        title += '.' + dot(summary_dict['Source']).upper()
+        title += '-' + dot(summary_dict['Source'].replace(' ', ''))
         title += '.' + str(summary_dict['PubDate'].split()[0])
         title += '.pdf'
 

@@ -35,7 +35,7 @@ import urllib
 
 VERSION = '0.3a'
 MAIL = 'your_mail@gmail.com'
-DEBUG = True
+DEBUG = False
 JDICT = {'NUCLEIC.ACIDS.RES': 'NAR'}
 ADD_PMID = False
 WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and, by, during'

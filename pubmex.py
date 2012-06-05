@@ -373,8 +373,7 @@ def rename(src, dst, rename_flag):
         print '(fake, use -r)\t', src, '-*NOT*->', dst
         pass
 
-
-if '__main__' == __name__:
+def main():
     OPTIONS, ARGUMENTS = get_options()
     keywords = ''
     title = ''
@@ -415,3 +414,7 @@ if '__main__' == __name__:
         #    print 'ERROR: \t\tProblem! The pubmex could not find DOI in the pdf file!'
         # TODO
         #get_pmid_via_search_in_pubmex_line_by_line(TEMPFILE_NAME)#problem?!
+
+
+if '__main__' == __name__:
+    main()

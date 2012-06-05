@@ -379,7 +379,6 @@ if '__main__' == __name__:
     keywords = ''
     title = ''
     # 1st mode: non-automatic
-    hr()
     if OPTIONS.PMID_or_DOI:
         if is_it_pmid(OPTIONS.PMID_or_DOI):
             title = get_title_via_pmid(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)

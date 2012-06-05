@@ -83,7 +83,7 @@ def clean_string(text):
 
 def prepare_customed_title(text):
     """Only take text e.g 'RNA, structure' and return 'RNA.structure'
-    
+
     input:
      * text: customed_title
     """
@@ -131,7 +131,7 @@ def get_pmid_via_search_in_pubmex_line_by_line(
 
 
 def get_title_via_pmid(pmid, reference, customed_title, verbose=0):
-    """Use biopython to get summary dict
+    """Use biopython to get summary dict.
 
     input:
      * pmid of a publication, e.g. 17123955

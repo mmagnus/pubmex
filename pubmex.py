@@ -39,6 +39,8 @@ DEBUG = False
 JDICT = {'NUCLEIC.ACIDS.RES': 'NAR'}
 ADD_PMID = False
 WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and, by, during'
+DONE_MOVE_TO_FOLDER = True
+DONE_FOLDER_NAME = 'done'
 ###############################
 if not DEBUG:
     f = tempfile.NamedTemporaryFile()
@@ -375,13 +377,18 @@ if '__main__' == __name__:
     OPTIONS, ARGUMENTS = get_options()
     keywords = ''
     title = ''
+    # 1st mode: non-automatic
     hr()
     if OPTIONS.PMID_or_DOI:
         if is_it_pmid(OPTIONS.PMID_or_DOI):
             title = get_title_via_pmid(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)
         else:
             title = get_title_via_doi(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)  # OPTIONS.reference
-
+        #if title:
+        #    print title
+        #else:
+        #    print 'ERROR: \t\tProblem! Check your PMID/DOI!'
+    # 2nd mode: automatic
     if OPTIONS.automatic:
         filename = OPTIONS.filename
         print 'FILENAME:\t', filename
@@ -389,21 +396,22 @@ if '__main__' == __name__:
         if title:
             print 'TITLE: \t\t', title
             basename = os.path.basename(filename)
+            dirname = os.path.dirname(filename)
+            if dirname == '':
+                dirname = '.' + dirname  # .//file if dirname equals ''
             src = filename
-            dst = filename.replace(basename, title)
+            if DONE_FOLDER_NAME:
+                try:
+                    os.mkdir(dirname + os.sep + DONE_FOLDER_NAME)
+                except OSError:
+                    pass
+                dst = dirname + os.sep + DONE_FOLDER_NAME + os.sep + title
+            else:
+                dst = dirname + os.sep + title
             rename(src, dst, OPTIONS.rename)
-
-    if title is not False:
-        try:
-            text2clip(title)
-        except:
-            pass
-        if OPTIONS.filename and not OPTIONS.automatic:
-            basename = os.path.basename(OPTIONS.filename)
-            src = OPTIONS.filename
-            dst = OPTIONS.filename.replace(basename, title)
-            rename(src, dst, OPTIONS.rename)
-    else:
-        print 'ERROR: \t\tProblem! Check your PMID/DOI'
+        #if title:
+        #    print title
+        #else:
+        #    print 'ERROR: \t\tProblem! The pubmex could not find DOI in the pdf file!'
+        # TODO
         #get_pmid_via_search_in_pubmex_line_by_line(TEMPFILE_NAME)#problem?!
-    print title

@@ -64,6 +64,7 @@ def clean_string(text):
     """Execute operations to clean up a given string."""
     for word in WORDS_TO_REMOVE.split(','):
         text = text.replace('.' + word.strip() + '.', '.')
+        text = text.replace('.' + word.strip().upper() + '.', '.')
     text = text.replace(')', '.')
     text = text.replace('[', '.')
     text = text.replace(']', '.')

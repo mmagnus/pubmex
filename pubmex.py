@@ -23,6 +23,8 @@ DEP:
  - biopython http://biopython.org/wiki/Biopython
 """
 
+__version__ = '0.3a'
+
 from Bio import Entrez
 import sys
 import optparse
@@ -33,7 +35,6 @@ import subprocess
 import shutil
 import urllib
 
-VERSION = '0.3a'
 MAIL = 'your_mail@gmail.com'
 DEBUG = False
 JDICT = {'NUCLEIC.ACIDS.RES': 'NAR'}
@@ -323,7 +324,7 @@ def get_options(verbose=False):
 examples: pubmex.py -p 17123955; pumex.py
 -p 10.1038/embor.2008.212; pubmex.py -a -f file.pdf -r
 """
-    version = VERSION
+    version = __version__
 
     parser = optparse.OptionParser(description=description,
                               version=version,

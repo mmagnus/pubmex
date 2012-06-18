@@ -34,6 +34,7 @@ import tempfile
 import subprocess
 import shutil
 import urllib
+import ipdb
 
 MAIL = 'your_mail@gmail.com'
 DEBUG = True
@@ -42,6 +43,8 @@ ADD_PMID = False
 WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and, by, during'
 DONE_MOVE_TO_FOLDER = True
 DONE_FOLDER_NAME = 'done'
+HOW_MANY_LINES_TO_READ = 10
+LENGHT_OF_LINE = 20
 ###############################
 if not DEBUG:
     f = tempfile.NamedTemporaryFile()
@@ -67,6 +70,7 @@ def clean_string(text):
     for word in WORDS_TO_REMOVE.split(','):
         text = text.replace('.' + word.strip() + '.', '.')
         text = text.replace('.' + word.strip().upper() + '.', '.')
+    text = text.replace('?', '.')
     text = text.replace(')', '.')
     text = text.replace('[', '.')
     text = text.replace(']', '.')
@@ -101,7 +105,7 @@ def is_it_pmid(id):
         return False
 
 
-#problem?!
+# TODO
 def get_pmid_via_search_in_pubmex_line_by_line(
     text='RNA tertiary structure prediction with ModeRNA.'):
     """
@@ -120,18 +124,44 @@ def get_pmid_via_search_in_pubmex_line_by_line(
     #if p == 0:# it means it's OK
     #    txt = open(txtfn).read()
     #    if verbose: print txtfn, "is going to be opend"
-    result = Entrez.esearch(db="pubmed", term=text, email=MAIL)
-    d = Entrez.read(result)
-    print 'd[Count]: ', d['Count']
-    pmid = d['IdList']
-    print 'pmid: ', pmid
-    result = Entrez.esummary(db="pubmed", id=pmid, email=MAIL)
-    summary_dict = Entrez.read(result)[0]
-    print 'summary_dict: ', summary_dict
-    print 'summary_dict[AuthorList]: ', summary_dict['AuthorList']
+    c = 0
+    lines = text.split('\n')
+    for line in lines:
+        if (line.strip()) and (len(line) > LENGHT_OF_LINE):
+            query = line
+            if DEBUG:
+                print 'query: ', query
+            result = Entrez.esearch(db="pubmed", term=query, email=MAIL)
+            d = Entrez.read(result)
+            #print 'd[Count]: ', d['Count']
+            pmid = d['IdList']
+            if pmid:
+                print 'pmid: ', pmid
+            if len(pmid) == 1:  ## uniq PMID is found
+                return pmid
+            else:
+                for p in pmid:
+                    print p, get_title_via_pmid(p)
+            if c > HOW_MANY_LINES_TO_READ:
+                break
+            c += 1
+    print 
+    y = 0
+    for y in range(0, HOW_MANY_LINES_TO_READ):
+        query = lines[y] + ' ' + lines[y+1]
+        if DEBUG:
+                print 'query: ', query
+        result = Entrez.esearch(db="pubmed", term=query, email=MAIL)
+        d = Entrez.read(result)
+        #print 'd[Count]: ', d['Count']
+        pmid = d['IdList']
+        if pmid:
+            print 'pmid: ', pmid
+            if len(pmid) == 1:  ## uniq PMID is found
+                return pmid
+    
 
-
-def get_title_via_pmid(pmid, reference, customed_title, verbose=0):
+def get_title_via_pmid(pmid, reference='', customed_title='', verbose=0):
     """Use biopython to get summary dict.
 
     input:
@@ -211,7 +241,8 @@ def get_title_auto_from_text(text, reference, customed_title, verbose=0):
         return get_title_via_doi(doi, reference, customed_title, verbose=0)
     else:
         print 'DOI has *not* been found automatically!'
-        return False
+        pmid = get_pmid_via_search_in_pubmex_line_by_line(text)
+        return get_title_via_pmid(pmid)
 
 def pdf2text(filename):
     """Convert a pdf file to a flat file.
@@ -229,7 +260,9 @@ def pdf2text(filename):
         txt = open(txtfn).read()
         if DEBUG:
             print txtfn, "is going to be opened"
-    return txt
+        return txt
+    else:
+        print 'ERROR: pdftotext ' + filename + txtfn
     
 def get_doi_from_text(text, verbose=False):
     """Use several regular expression are used to get DOI in a text.
@@ -258,7 +291,6 @@ def get_doi_from_text(text, verbose=False):
     #if rex4: doi = rex4.group('doi')
     #if rex5: doi = rex5.group('doi')
     #if rex6: doi = rex6.group('doi')
-    doi = ''
     doi_line_re = re.compile('(?P<doi>.*DOI.*)').search(text)
     if doi_line_re:
         doi_line = doi_line_re.group('doi')
@@ -266,10 +298,12 @@ def get_doi_from_text(text, verbose=False):
             print 'DOI:', doi_line
         rrr = 'DOI:{0,1}\s{0,1}(?P<doi>[\w\d\.\-\\\/\–]+)'
         rex = re.compile(rrr).search(doi_line)
-        doi = rex.group('doi')
+        if rex:
+            doi = rex.group('doi')
         if verbose:
             print 'doi - found: ', doi
-    return doi
+            return doi
+    return None
 
 
 def get_value(field, txt, verbose=False):
@@ -425,15 +459,7 @@ def main():
                 dst = dirname + os.sep + title
             rename(src, dst, OPTIONS.rename)
         else:
-            get_pmid_via_search_in_pubmex_line_by_line(text)
-
-
-        #if title:
-        #    print title
-        #else:
-        #    print 'ERROR: \t\tProblem! The pubmex could not find DOI in the pdf file!'
-        # TODO
-
+            print 'ERROR: \t\tProblem! The pubmex could not find automatically a title for the pdf file! Sorry!'
 
 
 if '__main__' == __name__:

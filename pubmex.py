@@ -36,7 +36,7 @@ import shutil
 import urllib
 
 MAIL = 'your_mail@gmail.com'
-DEBUG = False
+DEBUG = True
 JDICT = {'NUCLEIC.ACIDS.RES': 'NAR'}
 ADD_PMID = False
 WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and, by, during'
@@ -205,65 +205,71 @@ def doi2pmid(doi):
         return False
 
 
-def get_title_auto_from_pdf(filename, reference, customed_title, verbose=0):
-    doi = get_doi_from_pdf(filename)
+def get_title_auto_from_text(text, reference, customed_title, verbose=0):
+    doi = get_doi_from_text(text)
     if doi:
         return get_title_via_doi(doi, reference, customed_title, verbose=0)
     else:
         print 'DOI has *not* been found automatically!'
         return False
 
-
-def get_doi_from_pdf(filename, verbose=False):
-    """Convert filename to txt, several regular expression are used to get DOI.
+def pdf2text(filename):
+    """Convert a pdf file to a flat file.
 
     input:
     * filename
-    * verbose
-
-    output:
-    * doi
 
     caution:
     * pdftotext: is required
     """
-    #args = ['pdftotext', filename, txtfn]#f.name]
     txtfn = TEMPFILE_NAME
     args = ['pdftotext', filename, txtfn]
     p = subprocess.call(args)
     doi = False
     if p == 0:
         txt = open(txtfn).read()
-        if verbose:
+        if DEBUG:
             print txtfn, "is going to be opened"
-        ### TODO
-        #rex = re.compile('doi:(?P<doi>.*\.\w+\.\w+)').search(txt)
-        #rex2 = re.compile('DOI\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
-        #rex3 = re.compile('DOI:\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
-        #rex4 = re.compile('doi:(?P<doi>\d+.\d+/[\w/]+)').search(txt)
-        #rex5 = re.compile('DOI:\s+(?P<doi>.+)').search(txt)
-        ### cleaning up the text
-        txt = txt.upper()
-        txt = txt.replace('–', '-')
-        #print txt
-        #rex6 = re.compile('doi:\s+(?P<doi>.+)').search(txt)
-        #if rex: doi = rex.group('doi')
-        #if rex2: doi = rex2.group('doi')
-        #if rex3: doi = rex3.group('doi')
-        #if rex4: doi = rex4.group('doi')
-        #if rex5: doi = rex5.group('doi')
-        #if rex6: doi = rex6.group('doi')
-        doi = ''
-        doi_line_re = re.compile('(?P<doi>.*DOI.*)').search(txt)
-        if doi_line_re:
-            doi_line = doi_line_re.group('doi')
-            if verbose:
-                print 'DOI:', doi_line
-            rrr = 'DOI:{0,1}\s{0,1}(?P<doi>[\w\d\.\-\\\/\–]+)'
-            rex = re.compile(rrr).search(doi_line)
-            doi = rex.group('doi')
-            if verbose:
-                print 'doi - found: ', doi
+    return txt
+    
+def get_doi_from_text(text, verbose=False):
+    """Use several regular expression are used to get DOI in a text.
+
+    input:
+    * text
+    * verbose
+
+    output:
+    * doi
+    """
+    ### TODO
+    #rex = re.compile('doi:(?P<doi>.*\.\w+\.\w+)').search(txt)
+    #rex2 = re.compile('DOI\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
+    #rex3 = re.compile('DOI:\s+(?P<doi>.*\.\w+\.\w+)').search(txt)
+    #rex4 = re.compile('doi:(?P<doi>\d+.\d+/[\w/]+)').search(txt)
+    #rex5 = re.compile('DOI:\s+(?P<doi>.+)').search(txt)
+    ### cleaning up the text
+    text = text.upper()
+    text = text.replace('–', '-')
+    #print txt
+    #rex6 = re.compile('doi:\s+(?P<doi>.+)').search(txt)
+    #if rex: doi = rex.group('doi')
+    #if rex2: doi = rex2.group('doi')
+    #if rex3: doi = rex3.group('doi')
+    #if rex4: doi = rex4.group('doi')
+    #if rex5: doi = rex5.group('doi')
+    #if rex6: doi = rex6.group('doi')
+    doi = ''
+    doi_line_re = re.compile('(?P<doi>.*DOI.*)').search(text)
+    if doi_line_re:
+        doi_line = doi_line_re.group('doi')
+        if verbose:
+            print 'DOI:', doi_line
+        rrr = 'DOI:{0,1}\s{0,1}(?P<doi>[\w\d\.\-\\\/\–]+)'
+        rex = re.compile(rrr).search(doi_line)
+        doi = rex.group('doi')
+        if verbose:
+            print 'doi - found: ', doi
     return doi
 
 
@@ -398,14 +404,16 @@ def main():
         #    print title
         #else:
         #    print 'ERROR: \t\tProblem! Check your PMID/DOI!'
+        print title
     # 2nd mode: automatic
     if OPTIONS.automatic:
         filename = OPTIONS.filename
         print 'FILENAME:\t', filename
-        title = get_title_auto_from_pdf(filename, False, OPTIONS.keywords)
+        text = pdf2text(filename)
+        title = get_title_auto_from_text(text, False, OPTIONS.keywords)
         if title:
             print 'TITLE: \t\t', title
-            basename = os.path.basename(filename)
+            ## basename = os.path.basename(filename)
             dirname = os.path.dirname(filename)
             if dirname == '':
                 dirname = '.' + dirname  # .//file if dirname equals ''
@@ -419,12 +427,16 @@ def main():
             else:
                 dst = dirname + os.sep + title
             rename(src, dst, OPTIONS.rename)
+        else:
+            get_pmid_via_search_in_pubmex_line_by_line(text)
+
+
         #if title:
         #    print title
         #else:
         #    print 'ERROR: \t\tProblem! The pubmex could not find DOI in the pdf file!'
         # TODO
-        #get_pmid_via_search_in_pubmex_line_by_line(TEMPFILE_NAME)#problem?!
+
 
 
 if '__main__' == __name__:

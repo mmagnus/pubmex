@@ -225,7 +225,6 @@ def pdf2text(filename):
     txtfn = TEMPFILE_NAME
     args = ['pdftotext', filename, txtfn]
     p = subprocess.call(args)
-    doi = False
     if p == 0:
         txt = open(txtfn).read()
         if DEBUG:
@@ -392,7 +391,6 @@ def test_if_pdftotext():
 def main():
     test_if_pdftotext()
     OPTIONS, ARGUMENTS = get_options()
-    keywords = ''
     title = ''
     # 1st mode: non-automatic
     if OPTIONS.PMID_or_DOI:
@@ -413,7 +411,6 @@ def main():
         title = get_title_auto_from_text(text, False, OPTIONS.keywords)
         if title:
             print 'TITLE: \t\t', title
-            ## basename = os.path.basename(filename)
             dirname = os.path.dirname(filename)
             if dirname == '':
                 dirname = '.' + dirname  # .//file if dirname equals ''

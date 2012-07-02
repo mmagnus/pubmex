@@ -416,7 +416,7 @@ def rename(src, dst, rename_flag):
 def test_if_pdftotext():
     """Test if pdftotext is installed - quick-and-dirty hack."""
     return_code = subprocess.call("pdftotext -h", shell=True, stderr=subprocess.PIPE)
-    if return_code == 0:
+    if return_code == 0 or return_code == 99:
         pass
     else:
         print "Please, install pdftotext! Pdftotext is a part of the proper-utils package.\nFor debian-based linux systems run 'sudo apt-get install poppler-utils' and start pubmex again. Good luck!"

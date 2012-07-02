@@ -37,7 +37,6 @@ import urllib
 import ipdb
 
 MAIL = 'your_mail@gmail.com'
-DEBUG = True
 JDICT = {'NUCLEIC.ACIDS.RES': 'NAR'}
 ADD_PMID = False
 WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and, by, during'
@@ -45,13 +44,10 @@ DONE_MOVE_TO_FOLDER = True
 DONE_FOLDER_NAME = 'done'
 HOW_MANY_LINES_TO_READ = 10
 LENGHT_OF_LINE = 20
+TEMPFILE_NAME = 'temp'
+LJUST = 20
+LJUST_SPACER = '.'
 ###############################
-if not DEBUG:
-    f = tempfile.NamedTemporaryFile()
-    TEMPFILE_NAME = f.name
-else:
-    TEMPFILE_NAME = 'temp'
-    print 'DEBUG - temp generated'
 ###############################
 
 
@@ -123,13 +119,13 @@ def get_pmid_via_search_in_pubmex_line_by_line(
     #doi = False
     #if p == 0:# it means it's OK
     #    txt = open(txtfn).read()
-    #    if verbose: print txtfn, "is going to be opend"
+    #    print txtfn, "is going to be opend"
     c = 0
     lines = text.split('\n')
     for line in lines:
         if (line.strip()) and (len(line) > LENGHT_OF_LINE):
             query = line
-            if DEBUG:
+            if debug:
                 print 'query: ', query
             result = Entrez.esearch(db="pubmed", term=query, email=MAIL)
             d = Entrez.read(result)
@@ -149,7 +145,7 @@ def get_pmid_via_search_in_pubmex_line_by_line(
     y = 0
     for y in range(0, HOW_MANY_LINES_TO_READ):
         query = lines[y] + ' ' + lines[y+1]
-        if DEBUG:
+        if debug:
                 print 'query: ', query
         result = Entrez.esearch(db="pubmed", term=query, email=MAIL)
         d = Entrez.read(result)
@@ -161,7 +157,7 @@ def get_pmid_via_search_in_pubmex_line_by_line(
                 return pmid
     
 
-def get_title_via_pmid(pmid, reference='', customed_title='', verbose=0):
+def get_title_via_pmid(pmid, debug, reference='', customed_title=''):
     """Use biopython to get summary dict.
 
     input:
@@ -178,8 +174,8 @@ def get_title_via_pmid(pmid, reference='', customed_title='', verbose=0):
     except RuntimeError:  # there is NO pmd like this
         return False
 
-    if verbose:
-        print 'summary_dict', summary_dict
+    if debug:
+        print 'summary_dict'.ljust(LJUST, LJUST_SPACER), summary_dict
 
     if not reference:
         title_of_pub = dot(summary_dict['Title'].strip())
@@ -213,20 +209,20 @@ def get_title_via_pmid(pmid, reference='', customed_title='', verbose=0):
     return title
 
 
-def text2clip(title, verbose=0):
+def text2clip(title):
     """Output is sent to the clipboard."""
     cmd = "echo '" + title.strip() + "'| xclip -selection clipboard"
     os.system(cmd)
 
 
-def doi2pmid(doi):
+def doi2pmid(doi, debug):
     """Get a PMID based on a given DOI."""
     # *needto be improved*
     result = Entrez.esearch(db="pubmed", term=doi, email=MAIL)
     out = Entrez.read(result)
     idlist = out["IdList"]
-    if DEBUG:
-        print 'IdList', idlist
+    if debug:
+        print 'IdList'.ljust(LJUST, LJUST_SPACER), idlist
     if len(idlist) == 1:
         return idlist[0]
         # if IdList ['20959296', '20959295', '20959294'959289', '20959288',
@@ -235,16 +231,16 @@ def doi2pmid(doi):
         return False
 
 
-def get_title_auto_from_text(text, reference, customed_title, verbose=0):
-    doi = get_doi_from_text(text)
+def get_title_auto_from_text(text, debug, reference, customed_title):
+    doi = get_doi_from_text(text, debug)
     if doi:
-        return get_title_via_doi(doi, reference, customed_title, verbose=0)
+        return get_title_via_doi(doi, debug, reference, customed_title)
     else:
         print 'DOI has *not* been found automatically!'
-        pmid = get_pmid_via_search_in_pubmex_line_by_line(text)
-        return get_title_via_pmid(pmid)
+        pmid = get_pmid_via_search_in_pubmex_line_by_line(text, debug)
+        return get_title_via_pmid(pmid, debug)
 
-def pdf2text(filename):
+def pdf2text(filename, debug):
     """Convert a pdf file to a flat file.
 
     input:
@@ -253,24 +249,30 @@ def pdf2text(filename):
     caution:
     * pdftotext: is required
     """
+    global TEMPFILE_NAME
+    if debug:
+        print ('generate ./' + TEMPFILE_NAME).ljust(LJUST, LJUST_SPACER) + '[OK]'
+    else:
+        f = tempfile.NamedTemporaryFile()
+        TEMPFILE_NAME = f.name
     txtfn = TEMPFILE_NAME
     args = ['pdftotext', filename, txtfn]
     p = subprocess.call(args)
     if p == 0:
         txt = open(txtfn).read()
-        if DEBUG:
+        if debug:
             print txtfn, "is going to be opened"
         return txt
     else:
         print 'ERROR: pdftotext ' + filename + txtfn
     
-def get_doi_from_text(text, verbose=False):
+def get_doi_from_text(text, debug):
     """Use several regular expression are used to get DOI in a text.
 
     input:
     * text
-    * verbose
-
+    * debug
+    
     output:
     * doi
     """
@@ -294,25 +296,25 @@ def get_doi_from_text(text, verbose=False):
     doi_line_re = re.compile('(?P<doi>.*DOI.*)').search(text)
     if doi_line_re:
         doi_line = doi_line_re.group('doi')
-        if verbose:
-            print 'DOI:', doi_line
+        if debug:
+            print 'doi_line: '.ljust(LJUST, LJUST_SPACER), doi_line
         rrr = 'DOI:{0,1}\s{0,1}(?P<doi>[\w\d\.\-\\\/\–]+)'
         rex = re.compile(rrr).search(doi_line)
         if rex:
             doi = rex.group('doi')
-        if verbose:
-            print 'doi - found: ', doi
+        if debug:
+            print 'doi is found: '.ljust(LJUST, LJUST_SPACER), doi
         return doi
     return None
 
 
-def get_value(field, txt, verbose=False):
+def get_value(field, txt, debug):
     """ """
     c = '(?P<line><meta .+"' + field + '".+>)'
     rex = re.compile(c).search(txt)
     if rex:
         line = rex.group('line')
-        if verbose:
+        if debug:
             print line
         b = 'content="(?P<pmid>\d+)"'
         bb = re.compile(b).search(line)
@@ -329,7 +331,7 @@ def get_pmid_via_doi_net(doi):
     return get_value('citation_pmid', content)
 
 
-def get_title_via_doi(doi, reference, customed_title, verbose=1):
+def get_title_via_doi(doi, debug, reference, customed_title):
     """Search in pubmex for a paper based on give doi.
     Get the paper, fetch pmid, get_title_via_pmid.
 
@@ -343,20 +345,20 @@ def get_title_via_doi(doi, reference, customed_title, verbose=1):
     """
     doi = doi.replace('DOI:', '')
     doi = doi.replace('doi:', '')
-    if DEBUG:
-        print doi
-    pmid = doi2pmid(doi)
-    if DEBUG:
-        print 'PMID:', pmid
+    if debug:
+        print 'doi: '.ljust(LJUST, LJUST_SPACER), doi
+    pmid = doi2pmid(doi, debug)
+    if debug:
+        print 'pmid: '.ljust(LJUST, LJUST_SPACER), pmid
     if pmid:
-        return get_title_via_pmid(pmid, reference, customed_title)
+        return get_title_via_pmid(pmid, debug, reference, customed_title)
     else:
         print 'ERROR: \t\tNot found in PubMed, although DOI (' + doi + ') was detected in the pdf!'
         pmid = get_pmid_via_doi_net(doi)
-        return get_title_via_pmid(pmid, reference, customed_title)
+        return get_title_via_pmid(pmid, debug, reference, customed_title)
 
 
-def get_options(verbose=False):
+def get_options():
     """ display options """
     usage = "%prog [options] id"
     description = """
@@ -388,13 +390,14 @@ examples: pubmex.py -p 17123955; pumex.py
     parser.add_option("--rename", "-r", action="store_true",
                       help="DOES rename files (only in a automatic mode)", default=False)
 
-    if verbose:
-        #(<Values at 0xb7b4b4cc: {'pmid': '1212'}>, [])
-        print parser.parse_args()
+    parser.add_option("--debug", "-d", action="store_true",
+                      help="show debug message", default=False)
 
     (options, arguments) = parser.parse_args()
-    if DEBUG:
-        print options
+    if options.debug:
+        print 'debug:'.ljust(LJUST, LJUST_SPACER),'on'
+        print 'options: '.ljust(LJUST, LJUST_SPACER), options
+        print 'arguments: '.ljust(LJUST, LJUST_SPACER), arguments
 
     if not options.PMID_or_DOI and not options.automatic:
         parser.print_help()
@@ -429,9 +432,9 @@ def main():
     # 1st mode: non-automatic
     if OPTIONS.PMID_or_DOI:
         if is_it_pmid(OPTIONS.PMID_or_DOI):
-            title = get_title_via_pmid(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)
+            title = get_title_via_pmid(OPTIONS.PMID_or_DOI, OPTIONS.debug, False, OPTIONS.keywords)
         else:
-            title = get_title_via_doi(OPTIONS.PMID_or_DOI, False, OPTIONS.keywords)  # OPTIONS.reference
+            title = get_title_via_doi(OPTIONS.PMID_or_DOI, OPTIONS.debug, False, OPTIONS.keywords)  # OPTIONS.reference
         #if title:
         #    print title
         #else:
@@ -440,11 +443,12 @@ def main():
     # 2nd mode: automatic
     if OPTIONS.automatic:
         filename = OPTIONS.filename
-        print 'FILENAME:\t', filename
-        text = pdf2text(filename)
-        title = get_title_auto_from_text(text, False, OPTIONS.keywords)
+        if OPTIONS.debug:
+            print 'filename: '.ljust(LJUST, LJUST_SPACER), filename
+        text = pdf2text(filename, OPTIONS.debug)
+        title = get_title_auto_from_text(text, OPTIONS.debug, False, OPTIONS.keywords)
         if title:
-            print 'TITLE: \t\t', title
+            print 'the title is ... ', title
             dirname = os.path.dirname(filename)
             if dirname == '':
                 dirname = '.' + dirname  # .//file if dirname equals ''

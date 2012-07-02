@@ -302,7 +302,7 @@ def get_doi_from_text(text, verbose=False):
             doi = rex.group('doi')
         if verbose:
             print 'doi - found: ', doi
-            return doi
+        return doi
     return None
 
 

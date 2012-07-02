@@ -409,10 +409,10 @@ examples: pubmex.py -p 17123955; pumex.py
 
 def rename(src, dst, rename_flag):
     if rename_flag:
-        print 'RENAME:\t\t', src, '-*DO*->', dst
+        print 'mv ', src, '-->', dst
         shutil.move(src, dst)
     else:
-        print '(fake, use -r)\t', src, '-*NOT*->', dst
+        print 'CAUTION! THE FILE WAS NOT RENAME, ADD -r OPTION TO RENAME THE FILE. IF YOU USE -r THE PUBMEX WILL DO\n', 'mv', src, '-->', dst
         pass
 
 

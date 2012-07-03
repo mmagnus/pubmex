@@ -38,6 +38,9 @@ import ipdb
 
 MAIL = 'your_mail@gmail.com'
 JDICT = {'NUCLEIC.ACIDS.RES': 'NAR'}
+# FirstAuthor.LastAuthor.keywords.Journal.year.pdf
+DELIMITER_AUTHOR_TITLE = '.'
+DELIMITER_KEYWORDS_JOURNAL = '.'
 ADD_PMID = False
 WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and, by, during'
 DONE_MOVE_TO_FOLDER = True
@@ -188,14 +191,14 @@ def get_title_via_pmid(pmid, debug, reference='', customed_title=''):
             title += '.' + last_author
 
         if not customed_title:
-            title += '-' + title_of_pub
+            title += DELIMITER_AUTHOR_TITLE + title_of_pub
         else:
-            title += '-' + prepare_customed_title(customed_title)
+            title += DELIMITER_AUTHOR_TITLE + prepare_customed_title(customed_title)
 
         if ADD_PMID:
-            title += '-' + pmid
+            title += DELIMITER_AUTHOR_TITLE + pmid
 
-        title += '-' + dot(summary_dict['Source'].replace(' ', ''))
+        title += DELIMITER_AUTHOR_TITLE + dot(summary_dict['Source'].replace(' ', ''))
         title += '.' + str(summary_dict['PubDate'].split()[0])
         title += '.pdf'
 

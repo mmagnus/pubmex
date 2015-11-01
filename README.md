@@ -2,6 +2,12 @@
 
 Marcin Magnus (m.magnus@o2.pl)
 
+    ➜  pdfs  pubmex.py -a -r -f Query.Konarska.pdf 
+    the title is ...  Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
+    mv  Query.Konarska.pdf --> ./done/Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
+
+.. and we get a file: `Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf`
+
 # DESCRIPTION
 
 `pubmex.py` is a script to get a fancy paper title based on given DOI or PMID.
@@ -9,6 +15,8 @@ Marcin Magnus (m.magnus@o2.pl)
 Format of the title:
 
 	a first author . a last author - (title("dotted") or your customed title) . PMID . journal . year . pdf
+	e.g.
+	  Kelley.Scott.The.evolution.biology.shift.towards.engineering.prediction-generating.tools.away.traditional.research.practice.EMBORep.2008.pdf
 
 Using xclip pubmex.py automatically copy the title to the clipboard. Just type Ctrl+V or paste it somewhere else.
 

@@ -34,7 +34,6 @@ import tempfile
 import subprocess
 import shutil
 import urllib
-import ipdb
 
 MAIL = 'your_mail@gmail.com'
 JDICT = {'NUCLEIC.ACIDS.RES': 'NAR'}

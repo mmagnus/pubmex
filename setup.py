@@ -13,7 +13,7 @@ def get_version():
 
 def get_long_description():
     descr = []
-    for fname in ['README']:  # , # 'CHANGES.txt':   # , 'TODO.txt'
+    for fname in ['README.md']:  # , # 'CHANGES.txt':   # , 'TODO.txt'
         f = open(fname)
         try:
             descr.append(f.read())
@@ -40,7 +40,7 @@ setup(
         #'setuptools',
         # -*- Extra requirements: -*-
     ],
-    data_files=[('', ['README']),
+    data_files=[('', ['README.md']),
                 ('demo', ['demo/demo01.pdf', 'demo/demo02.pdf'])
                 ],
     entry_points={

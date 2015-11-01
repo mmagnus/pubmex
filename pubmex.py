@@ -36,7 +36,7 @@ import shutil
 import urllib
 
 MAIL = 'your_mail@gmail.com'
-JDICT = {'NUCLEIC.ACIDS.RES': 'NAR'}
+JDICT = { 'NUCLEIC.ACIDS.RES': 'NAR', 'BiochimBiophysActa': 'BBA',     }
 # FirstAuthor.LastAuthor.keywords.Journal.year.pdf
 DELIMITER_AUTHOR_TITLE = '.'
 DELIMITER_KEYWORDS_JOURNAL = '.'
@@ -304,6 +304,9 @@ def get_doi_from_text(text, debug):
         rex = re.compile(rrr).search(doi_line)
         if rex:
             doi = rex.group('doi')
+            # .ORG/
+            if doi.startswith('.ORG'):
+                doi = doi.replace('.ORG/','')
         if debug:
             print 'doi is found: '.ljust(LJUST, LJUST_SPACER), doi
         return doi

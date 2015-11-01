@@ -1,67 +1,80 @@
+Pu(b)mex
+=================
 
-			Pu(b)mex
-			version 0.2
+Marcin Magnus (m.magnus@o2.pl)
 
+DESCRIPTION
+=================
 
-			Marcin Magnus
-			m.magnus@o2.pl
---------------------------------------------------------------------------------
+`pubmex.py` is a script to get a fancy paper title based on given DOI or PMID.
 
-TABLE OF CONTENTS
------------------
-
-1) DESCRIPTION
-2) INSTALLATION
-3) DEPENDENCIES
-4) EXAMPLES
-5) BUGS
-6) COPYRIGHT AND LICENCE
-7) AUTHOR INFORMATION
-8) ACKNOWLEDGEMENTS
-9) HISTORY
-
-
-1) DESCRIPTION
---------------
-pubmex.py is a script to get a fancy paper title based on given DOI or PMID.
 Format of the title:
+
 	a first author . a last author - (title("dotted") or your customed title) . PMID . journal . year . pdf
+
 Using xclip pubmex.py automatically copy the title to the clipboard. Just type Ctrl+V or paste it somewhere else.
 
-2) INSTALLATION
---------------
+DEPENDENCIES
+=================
+
+biopython, 
+
+INSTALLATION
+=================
 
 Look at INSTALL file.
 
-4) EXAMPLES
+MAC OSX
 --------------
+
+WINDOWS (NOT TESTED!!!!!!!)
+--------------
+
+Install:
+
+- Python http://www.python.org/ftp/python/2.6.4/python-2.6.4.msi
+- Biopython http://biopython.org/DIST/biopython-1.53.win32-py2.6.exe
+- GTK+ http://sourceforge.net/projects/gtk-win/ direct link http://downloads.sourceforge.net/project/gtk-win/GTK%2B%20Runtime%20Environment/GTK%2B%202.16/gtk2-runtime-2.16.6-2010-02-24-ash.exe?use_mirror=garr
+- pyGTK http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.16/pygtk-2.16.0+glade.win32-py2.6.exe
+- and pdftotext if you want to use `-a`
+
+EXAMPLES
+=================
 
 Visit https://github.com/m4rx9/pubmex/wiki
 
+BUGS
+=================
 
-5) BUGS
---------------
-pubmex.py might have still problem if it has to parse title of authors with characters like ółą and so on.
+`pubmex.py` might have still problem if it has to parse title of authors with characters like ółą and so on.
 
-6) COPYRIGHT AND LICENCE
-----------------------------
+COPYRIGHT AND LICENCE
+=================
+
 pubmex.py is Copyright (C) 2010 Marcin Magnus.  All rights reserved.
 
-This program is free software; you can redistribute it and/or modify it
-under the same terms as GLP
+This program is free software; you can redistribute it and/or modify it under the same terms as GLP
 
-7) AUTHOR INFORMATION
+AUTHOR INFORMATION
+=================
 
 Marcin Magnus, m.magnus@o2.pl
 
-8) ACKNOWLEDGEMENTS
+ACKNOWLEDGEMENTS
+=================
 
-...
+@todo
 
-9) HISTORY
+HISTORY
+=================
 
- version 0.2
- -- small changes
+version 0.3
+
+- osx installation
+
+version 0.2
+
+- small changes
 
 
 

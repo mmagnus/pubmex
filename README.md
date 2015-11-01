@@ -29,6 +29,7 @@ Using xclip pubmex.py automatically copy the title to the clipboard. Just type C
 ## MAC OSX
 
     sudo port install poppler #pdftotext
+	sudo port install py-pip # 
 	sudo pip install biopython # or sudo port install biopython # (but it did't work for me)
 	
 .. clone & run it :-) Set PATHs to `pubmex.py`

@@ -2,9 +2,9 @@
 
 Marcin Magnus (m.magnus@o2.pl)
 
-    ➜  pdfs  pubmex.py -a -r -f Query.Konarska.pdf 
+    ➜  pdfs  pubmex.py Query.Konarska.pdf 
     the title is ...  Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
-    mv  Query.Konarska.pdf --> ./done/Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
+    mv  Query.Konarska.pdf --> Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
 
 .. and we get a file: `Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf`
 

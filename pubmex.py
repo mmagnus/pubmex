@@ -36,13 +36,13 @@ import shutil
 import urllib
 
 MAIL = 'your_mail@gmail.com'
-JDICT = { 'NUCLEIC.ACIDS.RES': 'NAR', 'BiochimBiophysActa': 'BBA',     }
+JDICT = { 'NUCLEIC.ACIDS.RES': 'NAR', 'NucleicAcidsRes' : 'NAR', 'BiochimBiophysActa': 'BBA',     }
 # FirstAuthor.LastAuthor.keywords.Journal.year.pdf
 DELIMITER_AUTHOR_TITLE = '.'
 DELIMITER_KEYWORDS_JOURNAL = '.'
 ADD_PMID = False
 WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and, by, during'
-DONE_MOVE_TO_FOLDER = True
+DONE_MOVE_TO_FOLDER = False
 DONE_FOLDER_NAME = 'done'
 HOW_MANY_LINES_TO_READ = 10
 LENGHT_OF_LINE = 20
@@ -379,11 +379,11 @@ examples: pubmex.py -p 17123955; pumex.py
     parser.add_option("--PMID_or_DOI", "-p",
                       help="pass PMID/DOI of the paper")
 
-    parser.add_option("--filename", "-f",
-                      help="filename of a pdf")
+    #parser.add_option("--filename", "-f",
+    #                  help="filename of a pdf")
 
-    parser.add_option("--automatic", "-a", action="store_true",
-                      help="try to get DOI automatically from a pdf, this option DOES NOT RENAME, use -r to force renaming")
+    parser.add_option("--automatic", "-a", action="store_false",
+                      help="try to get DOI automatically from a pdf, this option DOES NOT RENAME, use -r to force renaming", default=True)
 
     parser.add_option("--keywords", "-k", type="string",
                       help="""pass your keywords which makes a filename in a format 'RNA, structure' """)
@@ -392,8 +392,8 @@ examples: pubmex.py -p 17123955; pumex.py
     #parser.add_option("--reference", "-r", action="store_true",
     #                  help = "reference format", default=False)
 
-    parser.add_option("--rename", "-r", action="store_true",
-                      help="DOES rename files (only in a automatic mode)", default=False)
+    parser.add_option("--rename", "-r", action="store_false",
+                      help="DOES rename files (only in a automatic mode)", default=True)
 
     parser.add_option("--debug", "-d", action="store_true",
                       help="show debug message", default=False)
@@ -447,7 +447,9 @@ def main():
         print title
     # 2nd mode: automatic
     if OPTIONS.automatic:
-        filename = OPTIONS.filename
+
+        filename = ARGUMENTS[0]
+
         if OPTIONS.debug:
             print 'filename: '.ljust(LJUST, LJUST_SPACER), filename
         text = pdf2text(filename, OPTIONS.debug)
@@ -458,14 +460,15 @@ def main():
             if dirname == '':
                 dirname = '.' + dirname  # .//file if dirname equals ''
             src = filename
-            if DONE_FOLDER_NAME:
-                try:
-                    os.mkdir(dirname + os.sep + DONE_FOLDER_NAME)
-                except OSError:
-                    pass
-                dst = dirname + os.sep + DONE_FOLDER_NAME + os.sep + title
-            else:
-                dst = dirname + os.sep + title
+
+            #if DONE_FOLDER_NAME:
+            #    try:
+            #        os.mkdir(dirname + os.sep + DONE_FOLDER_NAME)
+            #    except OSError:
+            #        pass
+            #    dst = dirname + os.sep + DONE_FOLDER_NAME + os.sep + title
+            #else:
+            dst = dirname + os.sep + title
             rename(src, dst, OPTIONS.rename)
         else:
             print 'ERROR: \t\tProblem! The pubmex could not find automatically a title for the pdf file! Sorry!'

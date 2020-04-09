@@ -11,6 +11,7 @@ Hnisz.Sharp.Phase.Separation.Model.Transcriptional.Control.Cell.2017.pdf Sharp.H
 
 Usage:
 
+```
     $ pubmex.py -a -f sharp2017.pdf
     Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
     mv  sharp2017.pdf --> ./Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
@@ -18,6 +19,7 @@ Usage:
     ➜  pdfs  pubmex.py Query.Konarska.pdf 
     the title is ...  Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
     mv  Query.Konarska.pdf --> Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
+```
 
 .. and we get a file:
 

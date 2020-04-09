@@ -1,12 +1,27 @@
 # Pu(b)mex
 
-Marcin Magnus (m.magnus@o2.pl)
+Nowadays, it’s not a big issue, with all Mendeley and other tools, however...
+
+I don’t want to put any PDF file collected on the way into my library, because then it gets super big (and then it’s hard to sync it for example with Dropbox). So now I can keep these PDF files into pdf-icebox and re-name them niecely automatically:
+
+```
+$ ls
+Hnisz.Sharp.Phase.Separation.Model.Transcriptional.Control.Cell.2017.pdf Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
+```
+
+Usage:
+
+    $ pubmex.py -a -f sharp2017.pdf
+    Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
+    mv  sharp2017.pdf --> ./Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
 
     ➜  pdfs  pubmex.py Query.Konarska.pdf 
     the title is ...  Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
     mv  Query.Konarska.pdf --> Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
 
-.. and we get a file: `Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf`
+.. and we get a file:
+
+`Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf`
 
 # DESCRIPTION
 
@@ -27,6 +42,11 @@ Using xclip pubmex.py automatically copy the title to the clipboard. Just type C
 - xclip (http://sourceforge.net/projects/xclip/) (not required)
 
 # INSTALLATION
+
+Python 3 is required.
+
+    git clone https://github.com/mmagnus/pubmex
+    pip install -e pubmex
 
 ## Ubuntu (Debian-based system)
 

@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-#-*- coding: utf-8 -*-
+#! /usr/bin/env python3
 """
 copyright 2010 Marcin Magnus
 
@@ -23,17 +22,18 @@ DEP:
  - biopython http://biopython.org/wiki/Biopython
 """
 
-__version__ = '0.3a'
+__version__ = '0.9'
 
 from Bio import Entrez
 import sys
-import optparse
+import argparse
+
 import os
 import re
 import tempfile
 import subprocess
 import shutil
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 MAIL = 'your_mail@gmail.com'
 JDICT = { 'NUCLEIC.ACIDS.RES': 'NAR', 'NucleicAcidsRes' : 'NAR', 'BiochimBiophysActa': 'BBA',     }
@@ -55,7 +55,7 @@ LJUST_SPACER = '.'
 
 def hr():
     """Draw -------------."""
-    print '-' * 80
+    print('-' * 80)
 
 
 def dot(text):
@@ -105,7 +105,7 @@ def is_it_pmid(id):
 
 # !!experimetal!! 
 def get_pmid_via_search_in_pubmex_line_by_line(
-    text='RNA tertiary structure prediction with ModeRNA.'):
+        text='RNA tertiary structure prediction with ModeRNA.', debug=False):
     """
     http://baoilleach.blogspot.com/2008/02/searching-pubmed-with-python.html
     """
@@ -128,33 +128,33 @@ def get_pmid_via_search_in_pubmex_line_by_line(
         if (line.strip()) and (len(line) > LENGHT_OF_LINE):
             query = line
             if debug:
-                print 'query: ', query
+                print('query: ', query)
             result = Entrez.esearch(db="pubmed", term=query, email=MAIL)
             d = Entrez.read(result)
             #print 'd[Count]: ', d['Count']
             pmid = d['IdList']
             if pmid:
-                print 'pmid: ', pmid
+                print('pmid: ', pmid)
             if len(pmid) == 1:  ## uniq PMID is found
                 return pmid
             else:
                 for p in pmid:
-                    print p, get_title_via_pmid(p)
+                    print(p, get_title_via_pmid(p))
             if c > HOW_MANY_LINES_TO_READ:
                 break
             c += 1
-    print 
+
     y = 0
     for y in range(0, HOW_MANY_LINES_TO_READ):
         query = lines[y] + ' ' + lines[y+1]
         if debug:
-                print 'query: ', query
+                print('query: ', query)
         result = Entrez.esearch(db="pubmed", term=query, email=MAIL)
         d = Entrez.read(result)
         #print 'd[Count]: ', d['Count']
         pmid = d['IdList']
         if pmid:
-            print 'pmid: ', pmid
+            print('pmid: ', pmid)
             if len(pmid) == 1:  ## uniq PMID is found
                 return pmid
     
@@ -177,7 +177,7 @@ def get_title_via_pmid(pmid, debug, reference='', customed_title=''):
         return False
 
     if debug:
-        print 'summary_dict'.ljust(LJUST, LJUST_SPACER), summary_dict
+        print('summary_dict'.ljust(LJUST, LJUST_SPACER), summary_dict)
 
     if not reference:
         title_of_pub = dot(summary_dict['Title'].strip())
@@ -203,7 +203,7 @@ def get_title_via_pmid(pmid, debug, reference='', customed_title=''):
 
         title = clean_string(title)
 
-        for k in JDICT.keys():
+        for k in list(JDICT.keys()):
             title = title.replace(k, JDICT[k])
     # TODO refernece
     else:
@@ -224,7 +224,7 @@ def doi2pmid(doi, debug):
     out = Entrez.read(result)
     idlist = out["IdList"]
     if debug:
-        print 'IdList'.ljust(LJUST, LJUST_SPACER), idlist
+        print('IdList'.ljust(LJUST, LJUST_SPACER), idlist)
     if len(idlist) == 1:
         return idlist[0]
         # if IdList ['20959296', '20959295', '20959294'959289', '20959288',
@@ -238,7 +238,7 @@ def get_title_auto_from_text(text, debug, reference, customed_title):
     if doi:
         return get_title_via_doi(doi, debug, reference, customed_title)
     else:
-        print 'DOI has *not* been found automatically!'
+        print('DOI has *not* been found automatically!')
         pmid = get_pmid_via_search_in_pubmex_line_by_line(text, debug)
         return get_title_via_pmid(pmid, debug)
 
@@ -253,20 +253,28 @@ def pdf2text(filename, debug):
     """
     global TEMPFILE_NAME
     if debug:
-        print ('generate ./' + TEMPFILE_NAME).ljust(LJUST, LJUST_SPACER) + '[OK]'
+        print(('generate ./' + TEMPFILE_NAME).ljust(LJUST, LJUST_SPACER) + '[OK]')
     else:
         f = tempfile.NamedTemporaryFile()
         TEMPFILE_NAME = f.name
     txtfn = TEMPFILE_NAME
-    args = ['pdftotext', filename, txtfn]
-    p = subprocess.call(args)
-    if p == 0:
-        txt = open(txtfn).read()
+    cmd = 'pdftotext ' + filename + ' ' + txtfn
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    out = process.stdout.read().decode()
+    err = process.stderr.read().decode()
+
+    if debug:
+        print('out:', out)
+        print('err:', err)
+
+    if not err:
+        txt = open(txtfn, encoding="utf8", errors='ignore').read()
         if debug:
-            print txtfn, "is going to be opened"
+            print(txtfn, "is going to be opened")
         return txt
     else:
-        print 'ERROR: pdftotext ' + filename + txtfn
+        print('ERROR: pdftotext ' + filename + ' ' + txtfn)
     
 def get_doi_from_text(text, debug):
     """Use several regular expression are used to get DOI in a text.
@@ -286,7 +294,7 @@ def get_doi_from_text(text, debug):
     #rex5 = re.compile('DOI:\s+(?P<doi>.+)').search(txt)
     ### cleaning up the text
     text = text.upper()
-    text = text.replace('–', '-')
+    #text = text.replace('–', '-')
     #print txt
     #rex6 = re.compile('doi:\s+(?P<doi>.+)').search(txt)
     #if rex: doi = rex.group('doi')
@@ -299,7 +307,7 @@ def get_doi_from_text(text, debug):
     if doi_line_re:
         doi_line = doi_line_re.group('doi')
         if debug:
-            print 'doi_line: '.ljust(LJUST, LJUST_SPACER), doi_line
+            print('doi_line: '.ljust(LJUST, LJUST_SPACER), doi_line)
         rrr = 'DOI:{0,1}\s{0,1}(?P<doi>[\w\d\.\-\\\/\–]+)'
         rex = re.compile(rrr).search(doi_line)
         if rex:
@@ -308,7 +316,7 @@ def get_doi_from_text(text, debug):
             if doi.startswith('.ORG'):
                 doi = doi.replace('.ORG/','')
         if debug:
-            print 'doi is found: '.ljust(LJUST, LJUST_SPACER), doi
+            print('doi is found: '.ljust(LJUST, LJUST_SPACER), doi)
         return doi
     return None
 
@@ -320,7 +328,7 @@ def get_value(field, txt, debug):
     if rex:
         line = rex.group('line')
         if debug:
-            print line
+            print(line)
         b = 'content="(?P<pmid>\d+)"'
         bb = re.compile(b).search(line)
         return bb.group('pmid')
@@ -329,9 +337,9 @@ def get_value(field, txt, debug):
 def get_pmid_via_doi_net(doi):
     """Give PMID using give DOI."""
     # here you must read in a field from the form
-    params = urllib.urlencode({'hdl': doi})
+    params = urllib.parse.urlencode({'hdl': doi})
     # the link where to send the data
-    f = urllib.urlopen("http://dx.doi.org/", params)
+    f = urllib.request.urlopen("http://dx.doi.org/", params)
     content = f.read()
     return get_value('citation_pmid', content)
 
@@ -351,19 +359,18 @@ def get_title_via_doi(doi, debug, reference, customed_title):
     doi = doi.replace('DOI:', '')
     doi = doi.replace('doi:', '')
     if debug:
-        print 'doi: '.ljust(LJUST, LJUST_SPACER), doi
+        print('doi: '.ljust(LJUST, LJUST_SPACER), doi)
     pmid = doi2pmid(doi, debug)
     if debug:
-        print 'pmid: '.ljust(LJUST, LJUST_SPACER), pmid
+        print('pmid: '.ljust(LJUST, LJUST_SPACER), pmid)
     if pmid:
         return get_title_via_pmid(pmid, debug, reference, customed_title)
     else:
-        print 'ERROR: \t\tNot found in PubMed, although DOI (' + doi + ') was detected in the pdf!'
+        print('ERROR: \t\tNot found in PubMed, although DOI (' + doi + ') was detected in the pdf!')
         pmid = get_pmid_via_doi_net(doi)
         return get_title_via_pmid(pmid, debug, reference, customed_title)
 
-
-def get_options():
+def get_parser():
     """ display options """
     usage = "%prog [options] id"
     description = """
@@ -371,53 +378,46 @@ examples: pubmex.py -p 17123955; pumex.py
 -p 10.1038/embor.2008.212; pubmex.py -a -f file.pdf -r
 """
     version = __version__
+    
+    parser = argparse.ArgumentParser(
+        description='', formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    parser = optparse.OptionParser(description=description,
-                              version=version,
-                              usage=usage)
+    parser.add_argument("-v", "--verbose",
+                        action="store_true", help="be verbose")
+    #parser.add_argument("file", help="", default="") # nargs='+')
 
-    parser.add_option("--PMID_or_DOI", "-p",
+    parser.add_argument("-p", "--PMID_or_DOI",
                       help="pass PMID/DOI of the paper")
 
-    #parser.add_option("--filename", "-f",
-    #                  help="filename of a pdf")
+    parser.add_argument("-f", "--file",
+                        help="filename (files) of a pdf", nargs='+')
 
-    parser.add_option("--automatic", "-a", action="store_false",
-                      help="try to get DOI automatically from a pdf, this option DOES NOT RENAME, use -r to force renaming", default=True)
+    parser.add_argument("--automatic", "-a", action="store_true",
+                       help="try to get DOI automatically from a pdf, this option DOES NOT RENAME, use -r to force renaming", default=False)
 
-    parser.add_option("--keywords", "-k", type="string",
+    parser.add_argument("-k", "--keywords", 
                       help="""pass your keywords which makes a filename in a format 'RNA, structure' """)
 
-    # TODO
-    #parser.add_option("--reference", "-r", action="store_true",
-    #                  help = "reference format", default=False)
+    ## # TODO
+    ## #parser.add_option("--reference", "-r", action="store_true",
+    ## #                  help = "reference format", default=False)
 
-    parser.add_option("--rename", "-r", action="store_false",
-                      help="DOES rename files (only in a automatic mode)", default=True)
+    parser.add_argument("-r", "--rename", action="store_false",
+                       help="DOES rename files (only in a automatic mode)", default=True)
 
-    parser.add_option("--debug", "-d", action="store_true",
-                      help="show debug message", default=False)
+    parser.add_argument("-d", "--debug", action="store_true",
+                       help="show debug message", default=False)
 
-    (options, arguments) = parser.parse_args()
-    if options.debug:
-        print 'debug:'.ljust(LJUST, LJUST_SPACER),'on'
-        print 'options: '.ljust(LJUST, LJUST_SPACER), options
-        print 'arguments: '.ljust(LJUST, LJUST_SPACER), arguments
+    return parser
 
-    if not options.PMID_or_DOI and not options.automatic:
-        parser.print_help()
-        parser.error('You have to pass PMID or DOI. You migth set -a (automatic)')
-        sys.exit(1)
-
-    return options, arguments
 
 
 def rename(src, dst, rename_flag):
     if rename_flag:
-        print 'mv ', src, '-->', dst
+        print('mv ', src, '-->', dst)
         shutil.move(src, dst)
     else:
-        print 'CAUTION! THE FILE WAS NOT RENAME, ADD -r OPTION TO RENAME THE FILE. IF YOU USE -r THE PUBMEX WILL DO\n', 'mv', src, '-->', dst
+        print('CAUTION! THE FILE WAS NOT RENAME, ADD -r OPTION TO RENAME THE FILE. IF YOU USE -r THE PUBMEX WILL DO\n', 'mv', src, '-->', dst)
         pass
 
 
@@ -427,51 +427,58 @@ def test_if_pdftotext():
     if return_code == 0 or return_code == 99:
         pass
     else:
-        print "Please, install pdftotext! Pdftotext is a part of the proper-utils package.\nFor debian-based linux systems run 'sudo apt-get install poppler-utils' and start pubmex again. Good luck!"
+        print("Please, install pdftotext! Pdftotext is a part of the proper-utils package.\nFor debian-based linux systems run 'sudo apt-get install poppler-utils' and start pubmex again. Good luck!")
         sys.exit(1)
+
 
 def main():
     test_if_pdftotext()
-    OPTIONS, ARGUMENTS = get_options()
+
+    parser = get_parser()
+    args = parser.parse_args()
+
     title = ''
     # 1st mode: non-automatic
-    if OPTIONS.PMID_or_DOI:
-        if is_it_pmid(OPTIONS.PMID_or_DOI):
-            title = get_title_via_pmid(OPTIONS.PMID_or_DOI, OPTIONS.debug, False, OPTIONS.keywords)
+    if args.PMID_or_DOI:
+        if is_it_pmid(args.PMID_or_DOI):
+            title = get_title_via_pmid(args.PMID_or_DOI, args.debug, False, args.keywords)
         else:
-            title = get_title_via_doi(OPTIONS.PMID_or_DOI, OPTIONS.debug, False, OPTIONS.keywords)  # OPTIONS.reference
+            title = get_title_via_doi(args.PMID_or_DOI, args.debug, False, args.keywords)  # opt.reference
         #if title:
         #    print title
         #else:
         #    print 'ERROR: \t\tProblem! Check your PMID/DOI!'
-        print title
+        print(title)
+
     # 2nd mode: automatic
-    if OPTIONS.automatic:
+    if args.automatic:
+        #################################
+        if list != type(args.file):
+            args.file = [args.file]
+        ##################################
+        for filename in args.file:
+            if args.debug:
+                print('filename: '.ljust(LJUST, LJUST_SPACER), filename)
+            text = pdf2text(filename, args.debug)
+            title = get_title_auto_from_text(text, args.debug, False, args.keywords)
+            if title:
+                print('the title is ... ', title)
+                dirname = os.path.dirname(filename)
+                if dirname == '':
+                    dirname = '.' + dirname  # .//file if dirname equals ''
+                src = filename
 
-        filename = ARGUMENTS[0]
-
-        if OPTIONS.debug:
-            print 'filename: '.ljust(LJUST, LJUST_SPACER), filename
-        text = pdf2text(filename, OPTIONS.debug)
-        title = get_title_auto_from_text(text, OPTIONS.debug, False, OPTIONS.keywords)
-        if title:
-            print 'the title is ... ', title
-            dirname = os.path.dirname(filename)
-            if dirname == '':
-                dirname = '.' + dirname  # .//file if dirname equals ''
-            src = filename
-
-            #if DONE_FOLDER_NAME:
-            #    try:
-            #        os.mkdir(dirname + os.sep + DONE_FOLDER_NAME)
-            #    except OSError:
-            #        pass
-            #    dst = dirname + os.sep + DONE_FOLDER_NAME + os.sep + title
-            #else:
-            dst = dirname + os.sep + title
-            rename(src, dst, OPTIONS.rename)
-        else:
-            print 'ERROR: \t\tProblem! The pubmex could not find automatically a title for the pdf file! Sorry!'
+                #if DONE_FOLDER_NAME:
+                #    try:
+                #        os.mkdir(dirname + os.sep + DONE_FOLDER_NAME)
+                #    except OSError:
+                #        pass
+                #    dst = dirname + os.sep + DONE_FOLDER_NAME + os.sep + title
+                #else:
+                dst = dirname + os.sep + title
+                rename(src, dst, args.rename)
+            else:
+                print('ERROR: \t\tProblem! The pubmex could not find automatically a title for the pdf file! Sorry!')
 
 
 if '__main__' == __name__:

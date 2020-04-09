@@ -242,6 +242,7 @@ def get_title_auto_from_text(text, debug, reference, customed_title):
         pmid = get_pmid_via_search_in_pubmex_line_by_line(text, debug)
         return get_title_via_pmid(pmid, debug)
 
+    
 def pdf2text(filename, debug):
     """Convert a pdf file to a flat file.
 
@@ -259,6 +260,7 @@ def pdf2text(filename, debug):
         TEMPFILE_NAME = f.name
     txtfn = TEMPFILE_NAME
     cmd = 'pdftotext ' + filename + ' ' + txtfn
+
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     out = process.stdout.read().decode()
@@ -479,7 +481,6 @@ def main():
                 rename(src, dst, args.rename)
             else:
                 print('ERROR: \t\tProblem! The pubmex could not find automatically a title for the pdf file! Sorry!')
-
 
 if '__main__' == __name__:
     main()

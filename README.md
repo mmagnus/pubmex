@@ -28,6 +28,11 @@ Using xclip pubmex.py automatically copy the title to the clipboard. Just type C
 
 # INSTALLATION
 
+Python 3 is required.
+
+    git clone https://github.com/mmagnus/pubmex
+    pip install -e pubmex
+
 ## Ubuntu (Debian-based system)
 
 	apt-get install xclip python-biopython pdftotext

@@ -404,8 +404,8 @@ examples: pubmex.py -p 17123955; pumex.py
     ## #parser.add_option("--reference", "-r", action="store_true",
     ## #                  help = "reference format", default=False)
 
-    parser.add_argument("-r", "--rename", action="store_false",
-                       help="DOES rename files (only in a automatic mode)", default=True)
+    parser.add_argument("-r", "--rename", action="store_true",
+                       help="DOES rename files (only in a automatic mode)", default=False)
 
     parser.add_argument("-d", "--debug", action="store_true",
                        help="show debug message", default=False)
@@ -415,6 +415,7 @@ examples: pubmex.py -p 17123955; pumex.py
 
 
 def rename(src, dst, rename_flag):
+    print(rename_flag)
     if rename_flag:
         print('mv ', src, '-->', dst)
         shutil.move(src, dst)

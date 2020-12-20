@@ -6,18 +6,21 @@ I don’t want to put any PDF file collected on the way into my library, because
 
 ```
 $ ls
-Hnisz.Sharp.Phase.Separation.Model.Transcriptional.Control.Cell.2017.pdf Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
+Hnisz.Sharp.Phase.Separation.Model.Transcriptional.Control.Cell.2017.pdf
+Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
 ```
 
 Usage:
 
-    $ pubmex.py -a -f sharp2017.pdf
+```
+    $ pubmex.py -a -f sharp2017.pdf -r
     Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
     mv  sharp2017.pdf --> ./Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
 
-    ➜  pdfs  pubmex.py Query.Konarska.pdf 
+    $ pubmex.py -a -f Query.Konarska.pdf -r
     the title is ...  Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
     mv  Query.Konarska.pdf --> Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
+```
 
 .. and we get a file:
 

@@ -22,3 +22,4 @@ echo '# get data based on a given pdf file, show a new new, DO rename'
 echo 'pubmex.py -a -f demo/demo01.pdf -r'
 python pubmex.py -a -f demo/demo01.pdf
 
+python pubmex.py -a -f demo/ncb3446.pdf

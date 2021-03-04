@@ -27,6 +27,7 @@ __version__ = '0.9'
 from Bio import Entrez
 import sys
 import argparse
+import subprocess
 
 import os
 import re
@@ -57,6 +58,12 @@ def hr():
     """Draw -------------."""
     print('-' * 80)
 
+def exe(cmd):
+    o = subprocess.Popen(
+        cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out = o.stdout.read().strip().decode()
+    err = o.stderr.read().strip().decode()
+    return out, err
 
 def dot(text):
     """Change ' '(space) into . ,e.g. Marcin Magnus -> Marcin.Magnus."""
@@ -413,7 +420,6 @@ examples: pubmex.py -p 17123955; pumex.py
     return parser
 
 
-
 def rename(src, dst, rename_flag):
     print(rename_flag)
     if rename_flag:
@@ -460,10 +466,23 @@ def main():
             args.file = [args.file]
         ##################################
         for filename in args.file:
+            # if osx
             if args.debug:
                 print('filename: '.ljust(LJUST, LJUST_SPACER), filename)
-            text = pdf2text(filename, args.debug)
-            title = get_title_auto_from_text(text, args.debug, False, args.keywords)
+
+            from sys import platform
+            if platform == "darwin":
+                out, err = exe('mdls ' + filename)
+                for l in out.split('\n'):
+                    if 'doi' in l:  # kMDItemDescription                     = "Nature Cell Biology 18, 1261 (2016). doi:10.1038/ncb3446"
+                        r = re.search('doi:(?P<doi>.+)', l)
+                        if r:
+                            doi = r.group('doi').replace('"','')
+                            title = get_title_via_doi(doi, args.debug, False, args.keywords)
+
+            if not title:  # if title not yet found
+                text = pdf2text(filename, args.debug)
+                title = get_title_auto_from_text(text, args.debug, False, args.keywords)
             if title:
                 print('the title is ... ', title)
                 dirname = os.path.dirname(filename)

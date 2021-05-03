@@ -130,6 +130,8 @@ def get_pmid_via_search_in_pubmex_line_by_line(
     #    txt = open(txtfn).read()
     #    print txtfn, "is going to be opend"
     c = 0
+    if not text:
+        return None
     lines = text.split('\n')
     for line in lines:
         if (line.strip()) and (len(line) > LENGHT_OF_LINE):
@@ -302,6 +304,8 @@ def get_doi_from_text(text, debug):
     #rex4 = re.compile('doi:(?P<doi>\d+.\d+/[\w/]+)').search(txt)
     #rex5 = re.compile('DOI:\s+(?P<doi>.+)').search(txt)
     ### cleaning up the text
+    if not text:
+        return None
     text = text.upper()
     #text = text.replace('–', '-')
     #print txt
@@ -348,9 +352,13 @@ def get_pmid_via_doi_net(doi):
     # here you must read in a field from the form
     params = urllib.parse.urlencode({'hdl': doi})
     # the link where to send the data
-    f = urllib.request.urlopen("http://dx.doi.org/", params)
-    content = f.read()
-    return get_value('citation_pmid', content)
+    try:
+        f = urllib.request.urlopen("http://dx.doi.org/", params)
+        content = f.read()
+    except:
+        return ''
+    else:
+        return get_value('citation_pmid', content)
 
 
 def get_title_via_doi(doi, debug, reference, customed_title):
@@ -469,17 +477,18 @@ def main():
             # if osx
             if args.debug:
                 print('filename: '.ljust(LJUST, LJUST_SPACER), filename)
-
-            from sys import platform
-            if platform == "darwin":
-                out, err = exe('mdls ' + filename)
-                for l in out.split('\n'):
-                    if 'doi' in l:  # kMDItemDescription                     = "Nature Cell Biology 18, 1261 (2016). doi:10.1038/ncb3446"
-                        r = re.search('doi:(?P<doi>.+)', l)
-                        if r:
-                            doi = r.group('doi').replace('"','')
-                            title = get_title_via_doi(doi, args.debug, False, args.keywords)
-
+            # check if filename is a DOI
+            title = get_title_via_doi(filename.replace('.pdf', '').replace(':', '/'), args.debug, False, args.keywords)
+            if not title:
+                from sys import platform
+                if platform == "darwin":
+                    out, err = exe('mdls ' + filename)
+                    for l in out.split('\n'):
+                        if 'doi' in l:  # kMDItemDescription                     = "Nature Cell Biology 18, 1261 (2016). doi:10.1038/ncb3446"
+                            r = re.search('doi:(?P<doi>.+)', l)
+                            if r:
+                                doi = r.group('doi').replace('"','')
+                                title = get_title_via_doi(doi, args.debug, False, args.keywords)
             if not title:  # if title not yet found
                 text = pdf2text(filename, args.debug)
                 title = get_title_auto_from_text(text, args.debug, False, args.keywords)

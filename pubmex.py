@@ -148,7 +148,7 @@ def get_pmid_via_search_in_pubmex_line_by_line(
                 return pmid
             else:
                 for p in pmid:
-                    print(p, get_title_via_pmid(p))
+                    print(p, get_title_via_pmid(p, debug))
             if c > HOW_MANY_LINES_TO_READ:
                 break
             c += 1
@@ -214,6 +214,7 @@ def get_title_via_pmid(pmid, debug, reference='', customed_title=''):
 
         for k in list(JDICT.keys()):
             title = title.replace(k, JDICT[k])
+
     # TODO refernece
     else:
         title = ", ".join(summary_dict['AuthorList']) + " " + summary_dict['Title'].strip() + " " + summary_dict['Source'].strip() + " " + summary_dict['SO']
@@ -245,8 +246,9 @@ def doi2pmid(doi, debug):
 def get_title_auto_from_text(text, debug, reference, customed_title):
     doi = get_doi_from_text(text, debug)
     if doi:
-        return get_title_via_doi(doi, debug, reference, customed_title)
-    else:
+        title = get_title_via_doi(doi, debug, reference, customed_title)
+
+    if not doi or not title:
         print('DOI has *not* been found automatically!')
         pmid = get_pmid_via_search_in_pubmex_line_by_line(text, debug)
         return get_title_via_pmid(pmid, debug)
@@ -480,6 +482,7 @@ def main():
             # if osx
             if args.debug:
                 print('filename: '.ljust(LJUST, LJUST_SPACER), filename)
+
             # check if filename is a DOI
             title = get_title_via_doi(filename.replace('.pdf', '').replace(':', '/'), args.debug, False, args.keywords)
             if not title:
@@ -492,9 +495,11 @@ def main():
                             if r:
                                 doi = r.group('doi').replace('"','')
                                 title = get_title_via_doi(doi, args.debug, False, args.keywords)
+
             if not title:  # if title not yet found
                 text = pdf2text(filename, args.debug)
                 title = get_title_auto_from_text(text, args.debug, False, args.keywords)
+
             if title:
                 print('the title is ... ', title)
                 dirname = os.path.dirname(filename)

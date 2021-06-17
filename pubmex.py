@@ -22,7 +22,7 @@ DEP:
  - biopython http://biopython.org/wiki/Biopython
 """
 
-__version__ = '0.9'
+__version__ = '0.10'
 
 from Bio import Entrez
 import sys
@@ -321,6 +321,9 @@ def get_doi_from_text(text, debug):
         doi_line = doi_line_re.group('doi')
         if debug:
             print('doi_line: '.ljust(LJUST, LJUST_SPACER), doi_line)
+        # fixes
+        doi_line = doi_line.replace('10. 1073', '10.1073') # for pnas
+
         rrr = 'DOI:{0,1}\s{0,1}(?P<doi>[\w\d\.\-\\\/\–]+)'
         rex = re.compile(rrr).search(doi_line)
         if rex:

@@ -107,6 +107,8 @@ Marcin Magnus, m.magnus@o2.pl
 
 # HISTORY
 
+version 1.0: with recent bugfixes 2021
+
 version 0.3
 
 - osx installation

@@ -1,6 +1,6 @@
 # Pu(b)mex
 
-![(https://img.shields.io/github/release/mmagnus/pubmex.svg)](https://github.com/mmagnus/pubmex/releases) 
+[![tag](https://img.shields.io/github/release/mmagnus/pubmex.svg)](https://github.com/mmagnus/pubmex/releases)
 
 `pubmex.py` is a script to get a fancy paper title based on given DOI or PMID.
 

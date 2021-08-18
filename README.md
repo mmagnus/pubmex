@@ -1,4 +1,12 @@
 # Pu(b)mex
+`pubmex.py` is a script to get a fancy paper title based on given DOI or PMID.
+
+Format of the title:
+
+	a first author . a last author - (title("dotted") or your customed title) . PMID . journal . year . pdf
+	e.g.
+	  Kelley.Scott.The.evolution.biology.shift.towards.engineering.prediction-generating.tools.away.traditional.research.practice.EMBORep.2008.pdf
+
 
 Nowadays, it’s not a big issue, with all Mendeley and other tools, however...
 
@@ -19,30 +27,14 @@ Usage:
 
     $ pubmex.py Query.Konarska.pdf
     the title is ...  Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
-    mv  Query.Konarska.pdf --> Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
-```
-
-.. and we get a file:
-
-`Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf`
-
-# DESCRIPTION
-
-`pubmex.py` is a script to get a fancy paper title based on given DOI or PMID.
-
-Format of the title:
-
-	a first author . a last author - (title("dotted") or your customed title) . PMID . journal . year . pdf
-	e.g.
-	  Kelley.Scott.The.evolution.biology.shift.towards.engineering.prediction-generating.tools.away.traditional.research.practice.EMBORep.2008.pdf
-
-Using xclip pubmex.py automatically copy the title to the clipboard. Just type Ctrl+V or paste it somewhere else.
+    
+    $ pubmex.py eabc9191.full.pdf
+    mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remodels.lncRNA.structure.promotes.PRC2.activity.SciAdv.2021.pdf
 
 # DEPENDENCIES
 
 - biopython (http://biopython.org/wiki/Biopython)
 - pdftotext (http://linux.die.net/man/1/pdftotext)
-- xclip (http://sourceforge.net/projects/xclip/) (not required)
 
 # INSTALLATION
 
@@ -107,7 +99,7 @@ Marcin Magnus, m.magnus@o2.pl
 
 version 1.1 simplify input, pubmex.py *.pdf
 
-version 1.0 Read to go!
+version 1.0: with recent bugfixes 2021
 
 version 0.3
 

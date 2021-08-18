@@ -105,6 +105,10 @@ Marcin Magnus, m.magnus@o2.pl
 
 # HISTORY
 
+version 1.1 simplify input, pubmex.py *.pdf
+
+version 1.0 Read to go!
+
 version 0.3
 
 - osx installation
@@ -112,7 +116,3 @@ version 0.3
 version 0.2
 
 - small changes
-
-
-
-

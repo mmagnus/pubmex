@@ -143,12 +143,14 @@ def get_pmid_via_search_in_pubmex_line_by_line(
             #print 'd[Count]: ', d['Count']
             pmid = d['IdList']
             if pmid:
-                print('pmid: ', pmid)
+                if debug:
+                    print('pmid: ', pmid)
             if len(pmid) == 1:  ## uniq PMID is found
                 return pmid
             else:
                 for p in pmid:
-                    print(p, get_title_via_pmid(p, debug))
+                    if debug:
+                        print(p, get_title_via_pmid(p, debug))
             if c > HOW_MANY_LINES_TO_READ:
                 break
             c += 1
@@ -249,7 +251,7 @@ def get_title_auto_from_text(text, debug, reference, customed_title):
         title = get_title_via_doi(doi, debug, reference, customed_title)
 
     if not doi or not title:
-        print('DOI has *not* been found automatically!')
+        if debug: print('DOI has *not* been found automatically!')
         pmid = get_pmid_via_search_in_pubmex_line_by_line(text, debug)
         return get_title_via_pmid(pmid, debug)
 
@@ -388,7 +390,8 @@ def get_title_via_doi(doi, debug, reference, customed_title):
     if pmid:
         return get_title_via_pmid(pmid, debug, reference, customed_title)
     else:
-        print('ERROR: \t\tNot found in PubMed, although DOI (' + doi + ') was detected in the pdf!')
+        if debug:
+            print('ERROR: \t\tNot found in PubMed, although DOI (' + doi + ') was detected in the pdf!')
         pmid = get_pmid_via_doi_net(doi)
         return get_title_via_pmid(pmid, debug, reference, customed_title)
 
@@ -406,16 +409,14 @@ examples: pubmex.py -p 17123955; pumex.py
 
     parser.add_argument("-v", "--verbose",
                         action="store_true", help="be verbose")
-    #parser.add_argument("file", help="", default="") # nargs='+')
+
+    parser.add_argument("file", help="", default="", nargs='+')
 
     parser.add_argument("-p", "--PMID_or_DOI",
                       help="pass PMID/DOI of the paper")
 
-    parser.add_argument("-f", "--file",
-                        help="filename (files) of a pdf", nargs='+')
-
-    parser.add_argument("--automatic", "-a", action="store_true",
-                       help="try to get DOI automatically from a pdf, this option DOES NOT RENAME, use -r to force renaming", default=False)
+    #parser.add_argument("-f", "--file",
+    #                    help="filename (files) of a pdf", nargs='+')
 
     parser.add_argument("-k", "--keywords", 
                       help="""pass your keywords which makes a filename in a format 'RNA, structure' """)
@@ -424,9 +425,6 @@ examples: pubmex.py -p 17123955; pumex.py
     ## #parser.add_option("--reference", "-r", action="store_true",
     ## #                  help = "reference format", default=False)
 
-    parser.add_argument("-r", "--rename", action="store_true",
-                       help="DOES rename files (only in a automatic mode)", default=False)
-
     parser.add_argument("-d", "--debug", action="store_true",
                        help="show debug message", default=False)
 
@@ -434,7 +432,7 @@ examples: pubmex.py -p 17123955; pumex.py
 
 
 def rename(src, dst, rename_flag):
-    print(rename_flag)
+    # if debug: print(rename_flag)
     if rename_flag:
         print('mv ', src, '-->', dst)
         shutil.move(src, dst)
@@ -460,31 +458,35 @@ def main():
     args = parser.parse_args()
 
     title = ''
+    debug = args.debug
+    
     # 1st mode: non-automatic
     if args.PMID_or_DOI:
         if is_it_pmid(args.PMID_or_DOI):
-            title = get_title_via_pmid(args.PMID_or_DOI, args.debug, False, args.keywords)
+            title = get_title_via_pmid(args.PMID_or_DOI, debug, False, args.keywords)
         else:
-            title = get_title_via_doi(args.PMID_or_DOI, args.debug, False, args.keywords)  # opt.reference
+            title = get_title_via_doi(args.PMID_or_DOI, debug, False, args.keywords)  # opt.reference
         #if title:
         #    print title
         #else:
         #    print 'ERROR: \t\tProblem! Check your PMID/DOI!'
-        print(title)
+        if debug: print(title)
 
     # 2nd mode: automatic
-    if args.automatic:
+    if args.file:
         #################################
         if list != type(args.file):
             args.file = [args.file]
         ##################################
         for filename in args.file:
             # if osx
+            print('filename: '.ljust(LJUST, LJUST_SPACER), filename)
             if args.debug:
                 print('filename: '.ljust(LJUST, LJUST_SPACER), filename)
 
             # check if filename is a DOI
-            title = get_title_via_doi(filename.replace('.pdf', '').replace(':', '/'), args.debug, False, args.keywords)
+            fn = os.path.basename(filename)    
+            title = get_title_via_doi(fn.replace('.pdf', '').replace(':', '/'), args.debug, False, args.keywords)
             if not title:
                 from sys import platform
                 if platform == "darwin":
@@ -501,7 +503,8 @@ def main():
                 title = get_title_auto_from_text(text, args.debug, False, args.keywords)
 
             if title:
-                print('the title is ... ', title)
+                if debug:
+                    print('the title is ... ', title)
                 dirname = os.path.dirname(filename)
                 if dirname == '':
                     dirname = '.' + dirname  # .//file if dirname equals ''
@@ -515,7 +518,7 @@ def main():
                 #    dst = dirname + os.sep + DONE_FOLDER_NAME + os.sep + title
                 #else:
                 dst = dirname + os.sep + title
-                rename(src, dst, args.rename)
+                rename(src, dst, not args.debug)  # rename)
             else:
                 print('ERROR: \t\tProblem! The pubmex could not find automatically a title for the pdf file! Sorry!')
 

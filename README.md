@@ -75,7 +75,7 @@ Install:
 
 # EXAMPLES
 
-Visit https://github.com/m4rx9/pubmex/wiki
+Visit https://github.com/mmagnus/pubmex/wiki
 
 Run a script with examples:
 
@@ -84,20 +84,6 @@ Run a script with examples:
 # BUGS
 
 `pubmex.py` might have still problem if it has to parse title of authors with characters like ółą and so on.
-
-# COPYRIGHT AND LICENCE
-
-pubmex.py is Copyright (C) 2010-2015 Marcin Magnus.  All rights reserved.
-
-This program is free software; you can redistribute it and/or modify it under the same terms as GLP
-
-# AUTHOR INFORMATION
-
-Marcin Magnus, m.magnus@o2.pl
-
-# ACKNOWLEDGEMENTS
-
-@todo
 
 # HISTORY
 

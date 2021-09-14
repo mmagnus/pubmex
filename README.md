@@ -1,7 +1,8 @@
 # Pu(b)mex
 
 [![tag](https://img.shields.io/github/release/mmagnus/pubmex.svg)](https://github.com/mmagnus/pubmex/releases)
-
+ <a href="https://pypi.org/project/pubmex"><img src="https://badge.fury.io/py/pubmex.svg" alt="PyPI version"></a>
+ 	
 `pubmex.py` is a script to get a fancy paper title based on given DOI or PMID.
 
 Format of the title:
@@ -86,6 +87,8 @@ Run a script with examples:
 `pubmex.py` might have still problem if it has to parse title of authors with characters like ółą and so on.
 
 # HISTORY
+
+version 1.2 Small fixes
 
 version 1.1 simplify input, pubmex.py *.pdf
 

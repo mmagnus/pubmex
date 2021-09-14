@@ -1,51 +1,28 @@
 from setuptools import setup, find_packages
+import versioneer
 
-
-def get_version():
-    f = open('pubmex.py')
-    try:
-        for line in f:
-            if line.startswith('__version__'):
-                return eval(line.split('=')[-1])
-    finally:
-        f.close()
-
-
-def get_long_description():
-    descr = []
-    for fname in ['README.md']:  # , # 'CHANGES.txt':   # , 'TODO.txt'
-        f = open(fname)
-        try:
-            descr.append(f.read())
-        finally:
-            f.close()
-    return '\n\n'.join(descr)
-
-
+# read the contents of your README file
+with open('README.md') as f:
+    long_description = f.read()
+    
 setup(
     name='pubmex',
-    version=get_version(),
     description="pu(b)mex: a scientific publication renamer",
-    long_description=get_long_description(),
-    keywords='publication, pubmed, doi, pmid',
+    long_description=long_description,
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
+    packages=find_packages(),
+    test_suite="tests",
+    url='https://github.com/mmagnus/pubmex',
+    scripts=['pubmex.py',
+             ],
+    license='MIT',
     author='Marcin Magnus',
-    author_email='m.magnus@o2.pl',
-    url='https://github.com/m4rx9/pubmex/wiki',
-    license='GPLv3',
-    py_modules=['pubmex'],
-    namespace_packages=[],
+    author_email='mag_dex@o2.pl',
+    long_description_content_type="text/markdown",
     include_package_data=True,
-    zip_safe=False,
+    keywords='publication, pubmed, doi, pmid',
     install_requires=[
-        #'setuptools',
-        # -*- Extra requirements: -*-
-    ],
-    data_files=[('', ['README.md']),
-                ('demo', ['demo/demo01.pdf', 'demo/demo02.pdf'])
-                ],
-    entry_points={
-        'console_scripts': [
-            'pubmex = pubmex:main',
-        ],
-    },
+        'biopython'
+       ],
 )

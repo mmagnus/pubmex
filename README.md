@@ -43,10 +43,7 @@ Usage:
 
 # INSTALLATION
 
-Python 3 is required.
-
-    git clone https://github.com/mmagnus/pubmex
-    pip install -e pubmex
+    pip intsall pubmex
 
 ## Ubuntu (Debian-based system)
 

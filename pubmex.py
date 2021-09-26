@@ -249,12 +249,11 @@ def get_title_auto_from_text(text, debug, reference, customed_title):
     doi = get_doi_from_text(text, debug)
     if doi:
         title = get_title_via_doi(doi, debug, reference, customed_title)
-
     if not doi or not title:
         if debug: print('DOI has *not* been found automatically!')
         pmid = get_pmid_via_search_in_pubmex_line_by_line(text, debug)
-        return get_title_via_pmid(pmid, debug)
-
+        title = get_title_via_pmid(pmid, debug)
+    return title
     
 def pdf2text(filename, debug):
     """Convert a pdf file to a flat file.
@@ -509,7 +508,6 @@ def main():
                 if dirname == '':
                     dirname = '.' + dirname  # .//file if dirname equals ''
                 src = filename
-
                 #if DONE_FOLDER_NAME:
                 #    try:
                 #        os.mkdir(dirname + os.sep + DONE_FOLDER_NAME)

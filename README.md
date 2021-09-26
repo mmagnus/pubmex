@@ -1,7 +1,8 @@
 # Pu(b)mex
 
 [![tag](https://img.shields.io/github/release/mmagnus/pubmex.svg)](https://github.com/mmagnus/pubmex/releases)
-
+ <a href="https://pypi.org/project/pubmex"><img src="https://badge.fury.io/py/pubmex.svg" alt="PyPI version"></a>
+ 	
 `pubmex.py` is a script to get a fancy paper title based on given DOI or PMID.
 
 Format of the title:
@@ -61,18 +62,6 @@ Python 3 is required.
 	
 .. clone & run it :-) Set PATHs to `pubmex.py`
 
-## WINDOWS (NOT TESTED!!!!!!!)
-
-Install:
-
-- Python http://www.python.org/ftp/python/2.6.4/python-2.6.4.msi
-- Biopython http://biopython.org/DIST/biopython-1.53.win32-py2.6.exe
-- GTK+ http://sourceforge.net/projects/gtk-win/ direct link http://downloads.sourceforge.net/project/gtk-win/GTK%2B%20Runtime%20Environment/GTK%2B%202.16/gtk2-runtime-2.16.6-2010-02-24-ash.exe?use_mirror=garr
-- pyGTK http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.16/pygtk-2.16.0+glade.win32-py2.6.exe
-- and pdftotext if you want to use `-a`
-
-.. and it might work. I don't know (I don't care ;-))
-
 # EXAMPLES
 
 Visit https://github.com/mmagnus/pubmex/wiki
@@ -86,6 +75,8 @@ Run a script with examples:
 `pubmex.py` might have still problem if it has to parse title of authors with characters like ółą and so on.
 
 # HISTORY
+
+version 1.2 Small fixes
 
 version 1.1 simplify input, pubmex.py *.pdf
 

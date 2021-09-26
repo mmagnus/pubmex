@@ -76,16 +76,9 @@ Run a script with examples:
 
 # HISTORY
 
-version 1.2 Small fixes
-
-version 1.1 simplify input, pubmex.py *.pdf
-
-version 1.0: with recent bugfixes 2021
-
-version 0.3
-
-- osx installation
-
-version 0.2
-
-- small changes
+	1.3 Small fixes
+	1.2 Small fixes
+	1.1 simplify input, pubmex.py *.pdf
+	1.0: with recent bugfixes 2021
+	0.3: osx installation
+	0.2  Small changes

@@ -78,4 +78,4 @@ Run a script with examples:
 - 1.1 simplify input, `pubmex.py *.pdf`
 - 1.0 with recent bugfixes 2021
 - 0.3 osx installation
-- 0.2  Small changes
+- 0.2 Small changes

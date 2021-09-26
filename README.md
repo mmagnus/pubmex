@@ -43,7 +43,7 @@ Usage:
 
 # INSTALLATION
 
-    pip intsall pubmex
+    pip install pubmex
 
 ## Ubuntu (Debian-based system)
 

@@ -25,15 +25,15 @@ Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
 Usage:
 
 ```
-    $ pubmex.py sharp2017.pdf
-    Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
-    mv  sharp2017.pdf --> ./Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
+$ pubmex.py sharp2017.pdf
+Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
+mv sharp2017.pdf --> ./Sharp.Hockfield.Convergence.The.future.health.Science.2017.pdf
 
-    $ pubmex.py Query.Konarska.pdf
-    the title is ...  Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
+$ pubmex.py Query.Konarska.pdf
+mv Query.Konarska.pdf --> ./Smith.Konarska."Nought.may.endure.but.mutability".spliceosome.dynamics.regulation.splicing.MolCell.2008.pdf
     
-    $ pubmex.py eabc9191.full.pdf
-    mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remodels.lncRNA.structure.promotes.PRC2.activity.SciAdv.2021.pdf
+$ pubmex.py eabc9191.full.pdf
+mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remodels.lncRNA.structure.promotes.PRC2.activity.SciAdv.2021.pdf
 ```
 
 # DEPENDENCIES
@@ -44,38 +44,16 @@ Usage:
 # INSTALLATION
 
     pip install pubmex
-
-## Ubuntu (Debian-based system)
-
-	apt-get install xclip python-biopython pdftotext
-
-.. clone & run it :-) Set PATHs to `pubmex.py`
-
-## MAC OSX
-
-    sudo port install poppler #pdftotext
-	sudo port install py-pip # 
-	sudo pip install biopython # or sudo port install biopython # (but it did't work for me)
-	
-.. clone & run it :-) Set PATHs to `pubmex.py`
-
-# EXAMPLES
-
-Visit https://github.com/mmagnus/pubmex/wiki
-
-Run a script with examples:
-
-    ./examples-test.sh
-
-# BUGS
-
-`pubmex.py` might have still problem if it has to parse title of authors with characters like ółą and so on.
+    # Ubuntu (Debian-based system)
+    apt-get install xclip python-biopython pdftotext
+    # macOS
+    brew install poppler biopython
 
 # HISTORY
 
-- 1.3 Small fixes Fixed #5 #4
-- 1.2 Small fixes
-- 1.1 simplify input, `pubmex.py *.pdf`
-- 1.0 with recent bugfixes 2021
-- 0.3 osx installation
+- 1.3 Fixed #4 #5
+- 1.2 Fixed #2
+- 1.1 Simplify input, `pubmex.py *.pdf`
+- 1.0 With recent bugfixes 2021
+- 0.3 Ssx installation
 - 0.2 Small changes

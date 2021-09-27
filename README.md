@@ -2,8 +2,12 @@
 
 [![tag](https://img.shields.io/github/release/mmagnus/pubmex.svg)](https://github.com/mmagnus/pubmex/releases)
  <a href="https://pypi.org/project/pubmex"><img src="https://badge.fury.io/py/pubmex.svg" alt="PyPI version"></a>
+
+<p align="center">
+  <img align="center" src="osx-automator/pubmex-osx-automator.gif">
+</p>
  	
-`pubmex.py` is a script to get a fancy paper title based on given DOI or PMID.
+`pubmex.py` is a script to get a fancy paper title based on given DOI or PMID (can be also combined with macOS Finder)
 
 Format of the title:
 

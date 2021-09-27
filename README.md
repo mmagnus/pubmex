@@ -55,5 +55,6 @@ mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remo
 - 1.2 Fixed #2
 - 1.1 Simplify input, `pubmex.py *.pdf`
 - 1.0 With recent bugfixes 2021
-- 0.3 Ssx installation
+- 0.3 OSX installation
 - 0.2 Small changes
+- 0.1 Init version in 2010! :-)

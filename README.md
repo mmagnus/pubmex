@@ -55,6 +55,7 @@ mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remo
 
 # HISTORY
 
+- 1.4 Add osx-automator
 - 1.3 Fixed #4 #5
 - 1.2 Fixed #2
 - 1.1 Simplify input, `pubmex.py *.pdf`

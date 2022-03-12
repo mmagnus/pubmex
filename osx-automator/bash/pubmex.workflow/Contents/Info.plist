@@ -12,7 +12,7 @@
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>pubmex_zsh</string>
+				<string>pubmex</string>
 			</dict>
 			<key>NSMessage</key>
 			<string>runWorkflowAsService</string>

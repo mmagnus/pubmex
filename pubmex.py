@@ -34,6 +34,8 @@ import subprocess
 import shutil
 import urllib.request, urllib.parse, urllib.error
 
+__version__ = '1.4.1'
+
 MAIL = 'your_mail@gmail.com'
 JDICT = { 'NUCLEIC.ACIDS.RES': 'NAR', 'NucleicAcidsRes' : 'NAR', 'BiochimBiophysActa': 'BBA',     }
 # FirstAuthor.LastAuthor.keywords.Journal.year.pdf

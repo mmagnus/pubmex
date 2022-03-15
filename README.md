@@ -42,19 +42,24 @@ mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remo
 
 # DEPENDENCIES
 
+pubmex.py is depended on: 
+
 - biopython (http://biopython.org/wiki/Biopython)
 - pdftotext (http://linux.die.net/man/1/pdftotext)
 
-# INSTALLATION
+you can install them with: 
 
-    pip install pubmex
     # Ubuntu (Debian-based system)
     apt-get install xclip python-biopython pdftotext
     # macOS
     brew install poppler biopython # or "sudo port install poppler biopython"
     # or biopython with conda, `conda install -c conda-forge biopython`
 
-and get pubmex (the latest)
+and then:
+
+    pip install pubmex
+    
+or get pubmex (the latest, version from this Github repository)
 
     pip install -e git+http://github.com/mmagnus/pubmex.git#egg=pubmex
 

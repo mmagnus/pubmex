@@ -1,4 +1,4 @@
-# Pu(b)mex
+# Pubmex
 
 [![tag](https://img.shields.io/github/release/mmagnus/pubmex.svg)](https://github.com/mmagnus/pubmex/releases)
  <a href="https://pypi.org/project/pubmex"><img src="https://badge.fury.io/py/pubmex.svg" alt="PyPI version"></a>
@@ -40,7 +40,7 @@ $ pubmex.py eabc9191.full.pdf
 mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remodels.lncRNA.structure.promotes.PRC2.activity.SciAdv.2021.pdf
 ```
 
-# DEPENDENCIES
+# Install
 
 pubmex.py is depended on: 
 
@@ -63,7 +63,7 @@ or get pubmex (the latest, version from this Github repository)
 
     pip install -e git+http://github.com/mmagnus/pubmex.git#egg=pubmex
 
-# HISTORY
+# History
 
 - 1.4 Add osx-automator
 - 1.3 Fixed #4 #5

@@ -9,7 +9,7 @@ setup(
     name='pubmex',
     description="pu(b)mex: a scientific publication renamer",
     long_description=long_description,
-    version=versioneer.get_version(),
+    version='1.4.1' # versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
     test_suite="tests",

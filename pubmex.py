@@ -22,8 +22,6 @@ DEP:
  - biopython http://biopython.org/wiki/Biopython
 """
 
-__version__ = '0.10'
-
 from Bio import Entrez
 import sys
 import argparse
@@ -39,7 +37,7 @@ import urllib.request, urllib.parse, urllib.error
 MAIL = 'your_mail@gmail.com'
 JDICT = { 'NUCLEIC.ACIDS.RES': 'NAR', 'NucleicAcidsRes' : 'NAR', 'BiochimBiophysActa': 'BBA',     }
 # FirstAuthor.LastAuthor.keywords.Journal.year.pdf
-DELIMITER_AUTHOR_TITLE = '.'
+DELIMITER_AUTHOR_TITLE = '-'
 DELIMITER_KEYWORDS_JOURNAL = '.'
 ADD_PMID = False
 WORDS_TO_REMOVE = 'a, as, at, for, from, he, her, his, if, in, it, its, of, on, she, so, the, their, them, they, to, which' + ',with, and, by, during'
@@ -209,7 +207,7 @@ def get_title_via_pmid(pmid, debug, reference='', customed_title=''):
             title += DELIMITER_AUTHOR_TITLE + pmid
 
         title += DELIMITER_AUTHOR_TITLE + dot(summary_dict['Source'].replace(' ', ''))
-        title += '.' + str(summary_dict['PubDate'].split()[0])
+        title += '-' + str(summary_dict['PubDate'].split()[0])
         title += '.pdf'
 
         title = clean_string(title)
@@ -401,8 +399,7 @@ def get_parser():
 examples: pubmex.py -p 17123955; pumex.py
 -p 10.1038/embor.2008.212; pubmex.py -a -f file.pdf -r
 """
-    version = __version__
-    
+
     parser = argparse.ArgumentParser(
         description='', formatter_class=argparse.RawDescriptionHelpFormatter)
 

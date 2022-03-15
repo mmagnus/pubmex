@@ -52,6 +52,7 @@ mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remo
     apt-get install xclip python-biopython pdftotext
     # macOS
     brew install poppler biopython # or "sudo port install poppler biopython"
+    # or biopython with conda, `conda install -c conda-forge biopython`
 
 # HISTORY
 

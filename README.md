@@ -54,6 +54,10 @@ mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remo
     brew install poppler biopython # or "sudo port install poppler biopython"
     # or biopython with conda, `conda install -c conda-forge biopython`
 
+and get pubmex (the latest)
+
+    pip install -e git+http://github.com/mmagnus/pubmex.git#egg=pubmex
+
 # HISTORY
 
 - 1.4 Add osx-automator

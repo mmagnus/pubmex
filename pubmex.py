@@ -22,7 +22,6 @@ DEP:
  - biopython http://biopython.org/wiki/Biopython
 """
 
-from Bio import Entrez
 import sys
 import argparse
 import subprocess
@@ -33,6 +32,11 @@ import tempfile
 import subprocess
 import shutil
 import urllib.request, urllib.parse, urllib.error
+
+from icecream import ic
+import sys
+ic.configureOutput(outputFunction=lambda *a: print(*a, file=sys.stderr))
+ic.configureOutput(prefix='> ')
 
 MAIL = 'your_mail@gmail.com'
 JDICT = { 'NUCLEIC.ACIDS.RES': 'NAR', 'NucleicAcidsRes' : 'NAR', 'BiochimBiophysActa': 'BBA',     }
@@ -178,8 +182,60 @@ def get_title_via_pmid(pmid, debug, reference='', customed_title=''):
 
     output:
      * formated title(string)
+
+  <title>
+   Structure and mechanism of a methyltransferase ribozyme
+  </title>
+  
     """
-    result = Entrez.esummary(db="pubmed", id=pmid, email=MAIL)
+    import urllib.request
+    from bs4 import BeautifulSoup
+    if pmid:
+        ic(pmid)
+        o = urllib.request.urlopen('http://pubmed.ncbi.nlm.nih.gov/' + pmid)
+        txt = o.read()
+        soup = BeautifulSoup(txt, 'html.parser')
+
+        if debug: soup.prettify()
+    
+        title = soup.title.string
+        # content="Nat Chem Biol" name="citation_publisher">
+        journal = re.findall(r'content="(.+)" name="citation_publisher"', soup.prettify())[0]
+        ic(journal)
+        journal = journal.replace(' ', '')  # Nat Chem Biol -> NatChemBiol
+        # <meta content="2022/03/17" name="citation_online_date">
+        year = re.findall(r'meta content="(\d+)/\d+/\d+" name="citation_online_date', soup.prettify())
+        if not year:
+            # <meta content="2007/3" name="citation_publication_date">
+            #  <meta content="2016/11/29" name="citation_publication_date">
+            year = re.findall(r'meta content="(\d+)/.+" name="citation_publication_date', soup.prettify())
+        year = year[0]
+        ic(year)
+        """
+> auths: ['Jie Deng',
+          'Timothy J Wilson',
+          'Jia Wang',
+          'Xuemei Peng',
+          'Mengxiao Li',
+          'Xiaowei Lin',
+          'Wenjian Liao',
+          'David M J Lilley',
+          'Lin Huang']
+        """
+        auths = re.findall(r'meta content="(.+)" name="citation_author"', soup.prettify())# [0]
+        ic(auths)
+        
+        first = auths[0].split()[-1]
+        last = auths[-1].split()[-1] # take last name
+        ic(first, last)
+        all = first + '.' + last + '-' + title + '-' + journal + '.' + year + '.pdf'
+        all = all.replace(' ', '.')
+        return all
+
+    return None
+
+    result = Entrez.esearch(db="pubmed", term=pmid, email=MAIL) # id
+    ic(Entrez.read(result))
     try:
         summary_dict = Entrez.read(result)[0]
     except RuntimeError:  # there is NO pmd like this
@@ -228,20 +284,18 @@ def text2clip(title):
 
 
 def doi2pmid(doi, debug):
-    """Get a PMID based on a given DOI."""
-    # *needto be improved*
-    result = Entrez.esearch(db="pubmed", term=doi, email=MAIL)
-    out = Entrez.read(result)
-    idlist = out["IdList"]
-    if debug:
-        print('IdList'.ljust(LJUST, LJUST_SPACER), idlist)
-    if len(idlist) == 1:
-        return idlist[0]
-        # if IdList ['20959296', '20959295', '20959294'959289', '20959288',
-        #'20959287', '20952411', '20952403', '20952402'] # problem !!!
-    else:
-        return False
+    """Get a PMID based on a given DOI.
 
+    https://www.ncbi.nlm.nih.gov/esearch.fcgi?db=pubmed&term=asthma&field=title
+    """
+    # *needto be improved*
+    # doi = doi.replace('/', '-')
+    import urllib.request
+    o = urllib.request.urlopen('http://pubmed.ncbi.nlm.nih.gov/?term=%20' + doi + '&sort=date')
+    pmid = re.compile('data-article-pmid="(?P<pmid>\d+)"').search(str(o.read()))#soup.prettify())
+    if pmid:
+        return pmid['pmid']
+    return None
 
 def get_title_auto_from_text(text, debug, reference, customed_title):
     doi = get_doi_from_text(text, debug)
@@ -433,7 +487,7 @@ def rename(src, dst, rename_flag):
         print('mv ', src, '-->', dst)
         shutil.move(src, dst)
     else:
-        print('CAUTION! THE FILE WAS NOT RENAME, ADD -r OPTION TO RENAME THE FILE. IF YOU USE -r THE PUBMEX WILL DO\n', 'mv', src, '-->', dst)
+        print('CAUTION! THE FILE WAS NOT RENAME\n', 'mv', src, '-->', dst)
         pass
 
 
@@ -488,11 +542,16 @@ def main():
                 if platform == "darwin":
                     out, err = exe('mdls ' + filename)
                     for l in out.split('\n'):
-                        if 'doi' in l:  # kMDItemDescription                     = "Nature Cell Biology 18, 1261 (2016). doi:10.1038/ncb3446"
+                        #if 'kMDItemTitle' in l:
+                        #    print(l)
+                        # kMDItemTitle
+                        # kMDItemDescription                     = "Nature Chemical Biology, doi:10.1038/s41589-022-00982-z"
+                        if 'doi' in l:  # kMDItemDescription      = "Nature Cell Biology 18, 1261 (2016). doi:10.1038/ncb3446"
                             r = re.search('doi:(?P<doi>.+)', l)
                             if r:
                                 doi = r.group('doi').replace('"','')
                                 title = get_title_via_doi(doi, args.debug, False, args.keywords)
+                                ic(doi, title)
 
             if not title:  # if title not yet found
                 text = pdf2text(filename, args.debug)

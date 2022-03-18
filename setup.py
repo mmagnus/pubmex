@@ -23,6 +23,6 @@ setup(
     include_package_data=True,
     keywords='publication, pubmed, doi, pmid',
     install_requires=[
-        'biopython'
+        'icecream'
        ],
 )

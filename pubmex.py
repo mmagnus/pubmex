@@ -36,7 +36,8 @@ import urllib.request, urllib.parse, urllib.error
 from icecream import ic
 import sys
 ic.configureOutput(outputFunction=lambda *a: print(*a, file=sys.stderr))
-ic.configureOutput(prefix='> ')
+ic.configureOutput(prefix='', includeContext=True)
+
 
 MAIL = 'your_mail@gmail.com'
 JDICT = { 'NUCLEIC.ACIDS.RES': 'NAR', 'NucleicAcidsRes' : 'NAR', 'BiochimBiophysActa': 'BBA',     }
@@ -77,6 +78,10 @@ def clean_string(text):
     for word in WORDS_TO_REMOVE.split(','):
         text = text.replace('.' + word.strip() + '.', '.')
         text = text.replace('.' + word.strip().upper() + '.', '.')
+    text = text.strip()
+    text = text.replace(' ', '.')
+    text = text.replace('"', '')
+    text = text.replace(':', '.')    
     text = text.replace('?', '.')
     text = text.replace(')', '.')
     text = text.replace('[', '.')
@@ -132,6 +137,7 @@ def get_pmid_via_search_in_pubmex_line_by_line(
     #    txt = open(txtfn).read()
     #    print txtfn, "is going to be opend"
     c = 0
+    return None
     if not text:
         return None
     lines = text.split('\n')
@@ -139,23 +145,27 @@ def get_pmid_via_search_in_pubmex_line_by_line(
         if (line.strip()) and (len(line) > LENGHT_OF_LINE):
             query = line
             if debug:
-                print('query: ', query)
-            result = Entrez.esearch(db="pubmed", term=query, email=MAIL)
-            d = Entrez.read(result)
-            #print 'd[Count]: ', d['Count']
-            pmid = d['IdList']
-            if pmid:
-                if debug:
-                    print('pmid: ', pmid)
-            if len(pmid) == 1:  ## uniq PMID is found
-                return pmid
-            else:
-                for p in pmid:
+                ic(query)
+            ic(query)
+            ###
+            if 0:
+                from Bio import Entrez
+                result = Entrez.esearch(db="pubmed", term=query, email=MAIL)
+                d = Entrez.read(result)
+                #print 'd[Count]: ', d['Count']
+                pmid = d['IdList']
+                if pmid:
                     if debug:
-                        print(p, get_title_via_pmid(p, debug))
-            if c > HOW_MANY_LINES_TO_READ:
-                break
-            c += 1
+                        ic('pmid: ', pmid)
+                if len(pmid) == 1:  ## uniq PMID is found
+                    return pmid
+                else:
+                    for p in pmid:
+                        if debug:
+                            print(p, get_title_via_pmid(p, debug))
+                if c > HOW_MANY_LINES_TO_READ:
+                    break
+                c += 1
 
     y = 0
     for y in range(0, HOW_MANY_LINES_TO_READ):
@@ -167,7 +177,7 @@ def get_pmid_via_search_in_pubmex_line_by_line(
         #print 'd[Count]: ', d['Count']
         pmid = d['IdList']
         if pmid:
-            print('pmid: ', pmid)
+            ic('pmid: ', pmid)
             if len(pmid) == 1:  ## uniq PMID is found
                 return pmid
     
@@ -196,7 +206,7 @@ def get_title_via_pmid(pmid, debug, reference='', customed_title=''):
         txt = o.read()
         soup = BeautifulSoup(txt, 'html.parser')
 
-        if debug: soup.prettify()
+        # if debug: print(soup.prettify())
     
         title = soup.title.string
         # content="Nat Chem Biol" name="citation_publisher">
@@ -296,6 +306,25 @@ def doi2pmid(doi, debug):
     if pmid:
         return pmid['pmid']
     return None
+
+def title2pmid(title, debug):
+    """Get a PMID based on a given DOI.
+
+    https://www.ncbi.nlm.nih.gov/esearch.fcgi?db=pubmed&term=asthma&field=title
+    """
+    # *needto be improved*
+    # doi = doi.replace('/', '-')
+    import urllib.request
+    from urllib.parse import quote
+    url = 'http://pubmed.ncbi.nlm.nih.gov/?term=' + quote(title) + '&sort=date'
+    ic(url)
+    o = urllib.request.urlopen(url)
+    pmid = re.compile('data-article-pmid="(?P<pmid>\d+)"').search(str(o.read()))#soup.prettify())
+    ic('xx', pmid)
+    if pmid:
+        return pmid['pmid']
+    return None
+
 
 def get_title_auto_from_text(text, debug, reference, customed_title):
     doi = get_doi_from_text(text, debug)
@@ -419,6 +448,12 @@ def get_pmid_via_doi_net(doi):
         return get_value('citation_pmid', content)
 
 
+def get_title_via_title(title, debug):
+    return ''
+    pmid = title2pmid(title, debug)
+    ic(pmid)
+    return get_title_via_pmid(pmid, debug)#, reference, customed_title)
+
 def get_title_via_doi(doi, debug, reference, customed_title):
     """Search in pubmex for a paper based on give doi.
     Get the paper, fetch pmid, get_title_via_pmid.
@@ -433,16 +468,19 @@ def get_title_via_doi(doi, debug, reference, customed_title):
     """
     doi = doi.replace('DOI:', '')
     doi = doi.replace('doi:', '')
+    if len(doi) < 10:
+        return ''
+        
     if debug:
-        print('doi: '.ljust(LJUST, LJUST_SPACER), doi)
+        ic(doi)
     pmid = doi2pmid(doi, debug)
     if debug:
-        print('pmid: '.ljust(LJUST, LJUST_SPACER), pmid)
+        ic(pmid)
     if pmid:
         return get_title_via_pmid(pmid, debug, reference, customed_title)
     else:
         if debug:
-            print('ERROR: \t\tNot found in PubMed, although DOI (' + doi + ') was detected in the pdf!')
+            print('Not found in PubMed, although DOI (' + doi + ') was detected in the pdf!')
         pmid = get_pmid_via_doi_net(doi)
         return get_title_via_pmid(pmid, debug, reference, customed_title)
 
@@ -502,6 +540,7 @@ def test_if_pdftotext():
 
 
 def main():
+    print()
     test_if_pdftotext()
 
     parser = get_parser()
@@ -530,20 +569,21 @@ def main():
         ##################################
         for filename in args.file:
             # if osx
-            print('filename: '.ljust(LJUST, LJUST_SPACER), filename)
-            if args.debug:
-                print('filename: '.ljust(LJUST, LJUST_SPACER), filename)
+            print('-' * 80)
+            
+            ic(filename)
 
             # check if filename is a DOI
             fn = os.path.basename(filename)    
             title = get_title_via_doi(fn.replace('.pdf', '').replace(':', '/'), args.debug, False, args.keywords)
+            title_from_tag = ''
             if not title:
                 from sys import platform
                 if platform == "darwin":
                     out, err = exe('mdls ' + filename)
                     for l in out.split('\n'):
-                        #if 'kMDItemTitle' in l:
-                        #    print(l)
+                        if 'kMDItemTitle' in l:
+                            print(l)
                         # kMDItemTitle
                         # kMDItemDescription                     = "Nature Chemical Biology, doi:10.1038/s41589-022-00982-z"
                         if 'doi' in l:  # kMDItemDescription      = "Nature Cell Biology 18, 1261 (2016). doi:10.1038/ncb3446"
@@ -553,11 +593,27 @@ def main():
                                 title = get_title_via_doi(doi, args.debug, False, args.keywords)
                                 ic(doi, title)
 
-            if not title:  # if title not yet found
-                text = pdf2text(filename, args.debug)
-                title = get_title_auto_from_text(text, args.debug, False, args.keywords)
+
+                    if not title:  # if not yet title
+                        for l in out.split('\n'):
+                            if 'kMDItemTitle' in l:
+                            # kMDItemTitle                           = "CSSR: assig"
+                                tag, title_from_tag = l.split('=')
+                                title_from_tag = clean_string(title_from_tag) + '.pdf' # .replace(' ', '.')
+                                # title = get_title_via_title(title, args.debug)#, False, args.keywords)
+                                # ic(title)
+                                
+            if 1:  # search for doi in text
+                if not title:  # if title not yet found
+                    text = pdf2text(filename, args.debug)
+                    title = get_title_auto_from_text(text, args.debug, False, args.keywords)
+
+            if not title:
+                if title_from_tag:
+                    title = title_from_tag
 
             if title:
+                title = clean_string(title)
                 if debug:
                     print('the title is ... ', title)
                 dirname = os.path.dirname(filename)

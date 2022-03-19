@@ -238,6 +238,9 @@ def get_title_via_pmid(pmid, debug, reference='', customed_title=''):
         first = auths[0].split()[-1]
         last = auths[-1].split()[-1] # take last name
         ic(first, last)
+        if first == last:
+            last = ''
+        ic(first, last)
         all = first + '.' + last + '-' + title + '-' + journal + '.' + year + '.pdf'
         all = all.replace(' ', '.')
         return all

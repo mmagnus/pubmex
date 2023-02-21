@@ -1,6 +1,8 @@
 # Pubmex
 (tested on macOS and Linux)
 
+![](logo.jpg)
+
 [![tag](https://img.shields.io/github/release/mmagnus/pubmex.svg)](https://github.com/mmagnus/pubmex/releases)
  <a href="https://pypi.org/project/pubmex"><img src="https://badge.fury.io/py/pubmex.svg" alt="PyPI version"></a>
 

@@ -76,3 +76,7 @@ or get pubmex (the latest, version from this Github repository)
 - 0.3 OSX installation
 - 0.2 Small changes
 - 0.1 Init version in 2010! :-)
+
+# Alternatives
+
+- https://github.com/MicheleCotrufo/pdf-renamer

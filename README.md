@@ -43,6 +43,19 @@ $ pubmex.py eabc9191.full.pdf
 mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remodels.lncRNA.structure.promotes.PRC2.activity.SciAdv.2021.pdf
 ```
 
+# Tricks
+Copy paste the DOI into a filename and run pubmex.py:
+
+	$ pubmex.py 10.1038:s41587-022-01432-w.pdf
+	filename: .......... 10.1038:s41587-022-01432-w.pdf
+	mv  10.1038:s41587-022-01432-w.pdf -->Chowdhury.AlQuraishi-Single-sequence.protein.structure.prediction.using.language.model.deep.learning-NatBiotechnol-2022.pdf
+
+or PMID:
+
+       $ pubmex.py 35439059.pdf
+       filename: .......... 35439059.pdf
+       mv  35439059.pdf --> ./Vicens.Kieft-Thoughts.how.think.and.talk.about.RNA.structure-ProcNatlAcadSciUSA-2022.pdf
+
 # Install
 
 pubmex.py is depended on: 
@@ -76,3 +89,8 @@ or get pubmex (the latest, version from this Github repository)
 - 0.3 OSX installation
 - 0.2 Small changes
 - 0.1 Init version in 2010! :-)
+
+# Alternatives
+
+- https://github.com/MicheleCotrufo/pdf-renamer
+- https://github.com/MicheleCotrufo/pdf2doi

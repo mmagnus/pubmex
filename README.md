@@ -50,6 +50,12 @@ Copy paste the DOI into a filename and run pubmex.py:
 	filename: .......... 10.1038:s41587-022-01432-w.pdf
 	mv  10.1038:s41587-022-01432-w.pdf -->Chowdhury.AlQuraishi-Single-sequence.protein.structure.prediction.using.language.model.deep.learning-NatBiotechnol-2022.pdf
 
+or PMID:
+
+       $ pubmex.py 35439059.pdf
+       filename: .......... 35439059.pdf
+       mv  35439059.pdf --> ./Vicens.Kieft-Thoughts.how.think.and.talk.about.RNA.structure-ProcNatlAcadSciUSA-2022.pdf
+
 # Install
 
 pubmex.py is depended on: 

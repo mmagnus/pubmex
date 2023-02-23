@@ -93,3 +93,4 @@ or get pubmex (the latest, version from this Github repository)
 # Alternatives
 
 - https://github.com/MicheleCotrufo/pdf-renamer
+- https://github.com/MicheleCotrufo/pdf2doi

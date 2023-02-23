@@ -43,6 +43,13 @@ $ pubmex.py eabc9191.full.pdf
 mv  eabc9191.full.pdf --> ./Balas.Johnson.Establishing.RNA-RNA.interactions.remodels.lncRNA.structure.promotes.PRC2.activity.SciAdv.2021.pdf
 ```
 
+# Tricks
+Copy paste the DOI into a filename and run pubmex.py:
+
+	$ pubmex.py 10.1038:s41587-022-01432-w.pdf
+	filename: .......... 10.1038:s41587-022-01432-w.pdf
+	mv  10.1038:s41587-022-01432-w.pdf -->Chowdhury.AlQuraishi-Single-sequence.protein.structure.prediction.using.language.model.deep.learning-NatBiotechnol-2022.pdf
+
 # Install
 
 pubmex.py is depended on: 
